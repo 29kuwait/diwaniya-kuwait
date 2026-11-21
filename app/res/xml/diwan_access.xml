@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- يراقب ضغطات الريموت بس (بدون قراءة محتوى الشاشة): عشان شاشة التوقف تطلع وقت ما أحد يستخدم الرسيفر وتختفي أول ضغطة -->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeWindowStateChanged"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:accessibilityFlags="flagRequestFilterKeyEvents"
+    android:canRequestFilterKeyEvents="true"
+    android:canRetrieveWindowContent="false"
+    android:notificationTimeout="200"
+    android:description="@string/access_desc" />

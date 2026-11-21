@@ -1,0 +1,7 @@
+{
+    "_ملاحظة": "بيانات واي فاي الضيوف للباركود في الشريط. show=false يخفي البطاقة. اكتب اسم الشبكة وكلمة السر هنا.",
+    "show": false,
+    "ssid": "Diwaniya-Guest",
+    "password": "CHANGE-ME",
+    "security": "WPA"
+}

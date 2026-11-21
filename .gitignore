@@ -1,0 +1,10 @@
+# أسرار وملفات محلية
+*.jks
+*.keystore
+server.log*
+seen-apps.txt
+news-state.json
+__pycache__/
+*.tmp
+app/build/
+app/assets/

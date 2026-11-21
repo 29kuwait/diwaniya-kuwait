@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>شريط الديوانية</title>
+<style>
+  html,body{margin:0;height:100%;background:#000;overflow:hidden}
+  iframe{border:0;width:100%;height:100%;display:none}
+  #msg{position:fixed;inset:0;top:0;left:0;right:0;bottom:0;display:none;align-items:center;justify-content:center;
+    color:#9aa7bd;font:6vh "Segoe UI",Tahoma,Arial,sans-serif}
+</style>
+</head>
+<body>
+<iframe id="f"></iframe>
+<div id="msg">بانتظار اتصال اللابتوب لأول مرة…</div>
+<script>
+/* هذا الملف يثبت على الرسيفر مرة وحدة.
+   كل دقيقة يسأل اللابتوب: هل الشريط شغّال؟ وهل فيه نسخة جديدة؟
+   يحفظ آخر نسخة عنده، فيكمل يعرضها حتى لو اللابتوب مطفي. */
+var BASE = "http://192.168.1.100:8765";
+var K_HTML = "dw_html", K_VER = "dw_ver", K_ON = "dw_on";
+var mem = {};
+function lsGet(k){ try{ var v = localStorage.getItem(k); if(v !== null) return v; }catch(e){} return mem.hasOwnProperty(k) ? mem[k] : null; }
+function lsSet(k,v){ mem[k] = v; try{ localStorage.setItem(k,v); }catch(e){} }
+
+var f = document.getElementById("f"), msg = document.getElementById("msg"), shown = null;
+function show(){
+  var on = lsGet(K_ON) !== "0", html = lsGet(K_HTML), ver = lsGet(K_VER);
+  if(!on){ f.style.display = "none"; msg.style.display = "none"; if(shown !== null){ f.srcdoc = ""; shown = null; } return; }
+  if(!html){ f.style.display = "none"; msg.style.display = "flex"; return; }
+  msg.style.display = "none";
+  if(shown !== ver){ f.srcdoc = html; shown = ver; }
+  f.style.display = "block";
+}
+function get(path, cb){
+  var x = new XMLHttpRequest(), done = false;
+  function end(v){ if(!done){ done = true; cb(v); } }
+  x.open("GET", BASE + path + (path.indexOf("?") < 0 ? "?" : "&") + "t=" + Date.now());
+  x.timeout = 6000;
+  x.onload = function(){ end(x.status === 200 ? x.responseText : null); };
+  x.onerror = x.ontimeout = function(){ end(null); };
+  try{ x.send(); }catch(e){ end(null); }
+}
+function sync(){
+  get("/status", function(t){
+    var s = null; try{ s = t ? JSON.parse(t) : null; }catch(e){}
+    if(!s){ show(); return; }               // اللابتوب مطفي: نكمل بآخر نسخة
+    lsSet(K_ON, s.on ? "1" : "0");
+    if(s.on && s.v !== lsGet(K_VER)){
+      get("/view", function(h){ if(h){ lsSet(K_HTML, h); lsSet(K_VER, s.v); } show(); });
+    } else show();
+  });
+}
+show(); sync(); setInterval(sync, 60000);
+</script>
+</body>
+</html>

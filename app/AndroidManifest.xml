@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.diwaniya.kuwait">
+
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- يعرف وش التطبيق المفتوح (يفعّلها المستخدم من الإعدادات) -->
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" />
+    <!-- تنظيف ملفات التحميل القديمة حقتنا + قياس الواي فاي -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+    <uses-feature android:name="android.software.leanback" android:required="false" />
+
+    <application
+        android:label="شريط الديوانية"
+        android:icon="@drawable/ic_launcher"
+        android:banner="@drawable/banner"
+        android:allowBackup="false"
+        android:supportsRtl="true">
+
+        <!-- فتح التطبيق من القائمة: يشغّل الشريط أو يوقفه -->
+        <activity
+            android:name=".MainActivity"
+            android:label="شريط الديوانية"
+            android:theme="@android:style/Theme.NoDisplay"
+            android:excludeFromRecents="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- الواجهة الرئيسية الخاصة (مثل آبل تيفي، بدون إعلانات) — زر البيت يفتحها -->
+        <activity
+            android:name=".LauncherActivity"
+            android:label="ديوانية الكويت"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:launchMode="singleTask"
+            android:excludeFromRecents="true"
+            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize" />
+
+        <service android:name=".BarService" android:exported="false" />
+
+        <!-- إمكانية الوصول: يعرف متى ما أحد يستخدم الريموت (لشاشة التوقف الخاصة) -->
+        <service
+            android:name=".DiwanAccess"
+            android:label="@string/access_label"
+            android:exported="true"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/diwan_access" />
+        </service>
+
+        <!-- شاشة السكون: الشريط تحت على خلفية سوداء -->
+        <service
+            android:name=".TickerDream"
+            android:exported="true"
+            android:label="شريط الديوانية"
+            android:permission="android.permission.BIND_DREAM_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.dreams.DreamService" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </service>
+
+        <receiver android:name=".BootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>

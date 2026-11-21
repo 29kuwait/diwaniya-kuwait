@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الواجهة الرئيسية</title>
+<style>
+  :root{--gold:#e8c15a;--text:#f4f6fb;--muted:#9aa7bd}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;color:var(--text);
+    font-family:"Segoe UI",Tahoma,Arial,sans-serif;-webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(ellipse at 80% 0%, rgba(232,193,90,.10) 0%, rgba(0,0,0,0) 45%),
+      radial-gradient(ellipse at 10% 100%, rgba(40,80,160,.22) 0%, rgba(0,0,0,0) 55%),
+      linear-gradient(180deg,#0b1020 0%,#05070d 100%)}
+  /* المساحة تحت محجوزة لشريط الديوانية */
+  #page{position:absolute;inset:0;top:0;left:0;right:0;bottom:7vh;padding:4.5vh 5vw 0;display:flex;flex-direction:column}
+  /* ===== الجزء العلوي مثل واجهة قوقل: الشعار يمين، والأزرار والساعة يسار ===== */
+  @font-face{font-family:"DiwanCalli";src:url("aref-ruqaa-bold.woff2") format("woff2");font-weight:700}
+  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:3vh;min-height:10vh}
+  #brand{font-family:"DiwanCalli",serif;font-weight:700;font-size:7.5vh;line-height:1.15;white-space:nowrap;
+    background:linear-gradient(180deg,#fff3c4 0%,#f1cf6d 30%,#c99a35 55%,#8f6a1c 70%,#e9c86a 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;
+    filter:drop-shadow(0 .35vh .5vh rgba(0,0,0,.7));padding:0 .2em}
+  #topbar{display:flex;align-items:center}
+  .tb{width:6.4vh;height:6.4vh;border-radius:50%;margin-left:1.4vh;display:flex;align-items:center;justify-content:center;
+    background:rgba(255,255,255,.08);transition:transform .15s,background .15s,box-shadow .15s;position:relative}
+  .tb svg{width:3.2vh;height:3.2vh;fill:none;stroke:#e9edf5;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .tb.focus{background:#fff;transform:scale(1.15);box-shadow:0 0 3vh rgba(255,255,255,.35)}
+  .tb.focus svg{stroke:#111}
+  .tb .tip{position:absolute;top:110%;white-space:nowrap;font-size:1.8vh;color:#fff;opacity:0;transition:opacity .15s}
+  .tb.focus .tip{opacity:1}
+  #clockBox{display:flex;flex-direction:column;align-items:flex-start;margin-right:2.4vh;margin-left:.4vh}
+  #time{font-size:4.6vh;font-weight:600;line-height:1;color:#fff;font-variant-numeric:tabular-nums}
+  #time b{font-weight:700;color:var(--gold);font-size:.55em;margin-right:.25em}
+  #date{font-size:1.9vh;color:var(--muted);margin-top:.6vh}
+  .rowTitle{font-size:2.6vh;font-weight:700;color:#cfd6e4;margin:0 .6vw 1.6vh}
+  .row{display:flex;flex-wrap:nowrap;gap:0;padding:2.2vh .6vw 3vh;overflow:visible}
+  #all{flex-wrap:wrap;overflow:hidden;align-content:flex-start}
+  #rows{flex:1;overflow:hidden;position:relative}
+  #scroller{transition:transform .35s ease}
+  .tile{position:relative;flex:0 0 auto;margin:0 .7vw 2.6vh;border-radius:1.6vh;overflow:hidden;
+    background:linear-gradient(160deg,#28324a,#161d2e);
+    box-shadow:0 1vh 2.4vh rgba(0,0,0,.45);transition:transform .18s ease, box-shadow .18s ease;
+    display:flex;align-items:center;justify-content:center}
+  .fav{width:21vw;height:11.8vw}
+  .small{width:13.2vw;height:7.4vw}
+  .tile img.banner{width:100%;height:100%;object-fit:cover}
+  .tile img.icon{width:42%;height:auto;max-height:70%;object-fit:contain;filter:drop-shadow(0 .6vh 1vh rgba(0,0,0,.5))}
+  .tile .lbl{position:absolute;right:0;left:0;bottom:0;padding:.8vh 1vw;font-size:2vh;font-weight:700;
+    background:linear-gradient(0deg,rgba(0,0,0,.7),rgba(0,0,0,0));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    opacity:0;transition:opacity .18s}
+  .tile.noBanner .lbl{opacity:1}
+  .tile.focus{transform:scale(1.12);z-index:2;
+    box-shadow:0 0 0 .45vh rgba(255,255,255,.95),0 2vh 4vh rgba(0,0,0,.6),0 0 5vh rgba(232,193,90,.35)}
+  .tile.focus .lbl{opacity:1}
+  .settings{background:linear-gradient(160deg,#3a3f4b,#1d2129)}
+  .settings .gear{font-size:5vh}
+  #hint{position:absolute;bottom:8.5vh;left:5vw;font-size:1.8vh;color:#6f7b92}
+</style>
+</head>
+<body>
+<div id="page">
+  <header>
+    <div id="brand">ديوانية الكويت</div>
+    <div id="topbar">
+      <div class="tb tile-top" data-act="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><span class="tip">بحث</span></div>
+      <div class="tb tile-top" data-act="wifi"><svg viewBox="0 0 24 24"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><circle cx="12" cy="19" r="1"/></svg><span class="tip">الشبكة</span></div>
+      <div class="tb tile-top" data-act="account"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><span class="tip">الحساب</span></div>
+      <div class="tb tile-top" data-act="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="tip">الإعدادات</span></div>
+      <div id="clockBox"><div id="time">--:--</div><div id="date"></div></div>
+    </div>
+  </header>
+  <div id="rows"><div id="scroller">
+    <div class="rowTitle">المفضلة</div>
+    <div class="row" id="fav"></div>
+    <div class="rowTitle">كل التطبيقات</div>
+    <div class="row" id="all"></div>
+  </div></div>
+</div>
+<script>
+/* توقيت الكويت */
+const KW=3*3600*1000, pad=n=>String(n).padStart(2,"0");
+const DAYS=["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+function tick(){
+  const k=new Date(Date.now()+KW), H=k.getUTCHours(), h=H%12||12;
+  document.getElementById("time").innerHTML=pad(h)+":"+pad(k.getUTCMinutes())+" <b>"+(H<12?"ص":"م")+"</b>";
+  document.getElementById("date").textContent=DAYS[k.getUTCDay()]+" "+k.getUTCDate()+" "+MONTHS[k.getUTCMonth()];
+}
+tick(); setInterval(tick,1000);
+
+let tiles=[], cur=0, built=false;
+function tileEl(a,cls){
+  const t=document.createElement("div"); t.className="tile "+cls; t.dataset.pkg=a.pkg||"";
+  if(a.banner){ const i=document.createElement("img"); i.className="banner"; i.src=a.banner; t.append(i); }
+  else{ t.classList.add("noBanner"); if(a.icon){ const i=document.createElement("img"); i.className="icon"; i.src=a.icon; t.append(i);} }
+  const l=document.createElement("div"); l.className="lbl"; l.textContent=a.label||""; t.append(l);
+  return t;
+}
+function build(){
+  let apps=[]; try{ apps=JSON.parse(DiwanHome.getApps()); }catch(e){}
+  const favIds=(()=>{try{return DiwanHome.getFavorites().split(",").map(s=>s.trim()).filter(Boolean)}catch(e){return []}})();
+  const byPkg={}; apps.forEach(a=>byPkg[a.pkg]=a);
+  // ما نعرض الشاشات الرئيسية القديمة ولا الأدوات اللي ما تفيد
+  const hide=/tvlauncher|appdrawer|launcher|packageinstaller|androidterm|\.tv\.settings$/i;
+  const fav=document.getElementById("fav"), all=document.getElementById("all");
+  fav.innerHTML=""; all.innerHTML="";
+  favIds.forEach(p=>{ if(byPkg[p]) fav.append(tileEl(byPkg[p],"fav")); });
+  apps.filter(a=>!favIds.includes(a.pkg)&&!hide.test(a.pkg))
+      .sort((x,y)=>x.label.localeCompare(y.label,"ar"))
+      .forEach(a=>all.append(tileEl(a,"small")));
+  const st=tileEl({label:"الإعدادات"},"small settings"); st.dataset.pkg="#settings";
+  st.classList.add("noBanner"); st.insertAdjacentHTML("afterbegin",'<span class="gear">⚙️</span>'); all.append(st);
+  tiles=[...document.querySelectorAll(".tb, .tile")];
+  const firstApp=tiles.findIndex(t=>t.classList.contains("tile"));
+  if(!built){ cur=firstApp<0?0:firstApp; built=true; }
+  cur=Math.min(cur,tiles.length-1); focus(cur<0?0:cur);
+}
+function focus(i){
+  if(!tiles.length) return;
+  tiles.forEach(t=>t.classList.remove("focus"));
+  cur=i; const t=tiles[i]; t.classList.add("focus");
+  // نخلي البلاطة المختارة ظاهرة (نحرّك الصفوف لفوق لو نزلنا)
+  const rows=document.getElementById("rows"), sc=document.getElementById("scroller");
+  const r=t.getBoundingClientRect(), box=rows.getBoundingClientRect();
+  const curY=parseFloat((sc.style.transform.match(/-?[\d.]+/)||[0])[0])||0;
+  let y=curY;
+  if(r.bottom+30>box.bottom) y=curY-(r.bottom+30-box.bottom);
+  if(r.top-30<box.top) y=Math.min(0,curY+(box.top-(r.top-30)));
+  sc.style.transform="translateY("+y+"px)";
+}
+/* تنقل بالأسهم: أقرب بلاطة في الاتجاه */
+function move(dx,dy){
+  const a=tiles[cur].getBoundingClientRect(), ax=(a.left+a.right)/2, ay=(a.top+a.bottom)/2;
+  let best=-1,bs=1e9;
+  tiles.forEach((t,i)=>{ if(i===cur) return;
+    const b=t.getBoundingClientRect(), bx=(b.left+b.right)/2, by=(b.top+b.bottom)/2;
+    const ddx=bx-ax, ddy=by-ay;
+    if(dx&&(Math.sign(ddx)!==dx||Math.abs(ddy)>a.height*.6)) return;
+    if(dy&&(Math.sign(ddy)!==dy||Math.abs(ddy)<a.height*.3)) return;
+    const s=dx?Math.abs(ddx)+Math.abs(ddy)*3:Math.abs(ddy)+Math.abs(ddx)*.6;
+    if(s<bs){bs=s;best=i;}
+  });
+  if(best>=0) focus(best);
+}
+function open(){
+  const act=tiles[cur]&&tiles[cur].dataset.act;
+  if(act){ try{ DiwanHome.action(act); }catch(e){} return; }
+  const p=tiles[cur]&&tiles[cur].dataset.pkg; if(!p) return;
+  if(p==="#settings") DiwanHome.openSettings(); else DiwanHome.launch(p);
+}
+document.addEventListener("keydown",e=>{
+  const k=e.key, c=e.keyCode;
+  if(k==="ArrowRight"||c===22){move(1,0);e.preventDefault();}
+  else if(k==="ArrowLeft"||c===21){move(-1,0);e.preventDefault();}
+  else if(k==="ArrowUp"||c===19){move(0,-1);e.preventDefault();}
+  else if(k==="ArrowDown"||c===20){move(0,1);e.preventDefault();}
+  else if(k==="Enter"||c===13||c===23){open();e.preventDefault();}
+});
+window.onHomeResume=()=>build();
+window.onBack=()=>{ const i=tiles.findIndex(t=>t.classList.contains("tile")); focus(i<0?0:i); };
+build();
+</script>
+</body>
+</html>

@@ -1,0 +1,740 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>شريط المباريات</title>
+<style>
+  :root{
+    --bg:#0b1220; --panel:#111a2e; --text:#f2f5fa; --muted:#9aa7bd;
+    --red:#c62828; --green:#1f8f3a; --gray:#26324a; --accent:#e8c15a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:var(--bg);color:var(--text);
+    font-family:"Segoe UI",Tahoma,Arial,sans-serif;overflow:hidden}
+  /* كل الأحجام نسبة لارتفاع الشاشة عشان الشريط يتكيف مع أي مقاس */
+  /* عرض الشريط يتغير حسب المحتوى: قصير إذا ما فيه مباريات، ويطول معها.
+     الأقسام الثابتة عرضها بوحدة الارتفاع (vh) عشان ما تتأثر بعرض النافذة */
+  #bar{display:flex;height:100vh;width:100vw;font-size:34vh}
+  html,body{white-space:nowrap;text-align:center}
+  .cell{display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:var(--panel);line-height:1.05;white-space:nowrap}
+  #clock{width:10%;flex:0 0 auto}
+  /* الحرارة صارت داخل خانة الساعة، والمساحة رجعت للمباريات */
+  #prayer{width:10%;flex:0 0 auto}
+  /* خط عربي مزخرف (Aref Ruqaa) مدمج داخل الملف — يشتغل بدون إنترنت */
+  @font-face{font-family:"DiwanCalli";src:url(data:font/woff2;base64,__AREF_B64__) format("woff2");font-weight:700}
+  #brand{width:13%;flex:0 0 auto;background:transparent;overflow:visible}
+  #brandText{display:inline-block;font-family:"DiwanCalli",serif;font-weight:700;font-size:1.25em;line-height:1.15;white-space:nowrap;
+    padding:0 .05em .05em;transform-origin:center center;
+    background:linear-gradient(180deg,#fff3c4 0%,#f1cf6d 30%,#c99a35 55%,#8f6a1c 70%,#e9c86a 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;
+    filter:drop-shadow(0 .04em .05em rgba(0,0,0,.6))}
+  #matches{width:auto;flex:1 1 0;min-width:0;position:relative;overflow:hidden;background:var(--bg)}
+  .big{font-size:1em;font-weight:700;letter-spacing:.02em}
+  /* حجم موحّد لكل النصوص الصغيرة: .5em (نفس العد التنازلي للصلاة) */
+  .small{font-size:.5em;color:var(--muted);margin-top:.08em}
+  /* الحرارة بنفس حجمها القديم، في المساحة الفاضية جنب الساعة */
+  .clockRow{display:flex;align-items:center;justify-content:center}
+  .tcol{display:flex;flex-direction:column;align-items:center}
+  .tempSide{font-size:.9em;font-weight:700;color:var(--text);margin-right:.45em;line-height:1}
+  /* الساعة باللون الذهبي */
+  #clockTime{color:var(--accent);font-size:1em}
+  /* التاريخ تحت الساعة بنفس تنسيق العد التنازلي تحت الصلاة */
+  #clockDate{font-size:.5em;color:#fff;font-variant-numeric:tabular-nums}
+  /* الصلاة بنفس حجم الساعة، وتصغر تلقائياً فقط إذا ما وسعتها الخانة */
+  #prayer .big{color:var(--accent);font-size:1em}
+  #prayer .small{font-size:.5em;color:#fff;font-variant-numeric:tabular-nums}
+  /* بدون gap لأن متصفح الرسيفر (كروم 75) ما يدعمه */
+  #track{display:flex;align-items:stretch;height:100%;width:-webkit-max-content;width:max-content;padding:0 1vh}
+  #track{will-change:transform}
+  /* المباريات ملاصقة لليسار (جنب الصلاة) */
+  #matches.fromLeft{display:flex;justify-content:flex-end}
+  /* بطاقة واي فاي الضيوف: باركود كبير قد ما يسمح الشريط + نص بنفس حجم باقي النصوص */
+  .wifi{display:flex;align-items:center;padding:0 .6vh;margin:0 .6vh;white-space:nowrap}
+  .wifi .qr{width:94vh;height:94vh;flex:0 0 auto;background:#fff;border-radius:.8vh;overflow:hidden}
+  .wifi .qr svg{width:100%;height:100%;display:block}
+  .wifi .wtext{display:flex;flex-direction:column;justify-content:center;margin-right:2.5vh}
+  .wifi .wtitle{font-size:.5em;font-weight:700;color:#4fc3f7;line-height:1.25}
+  .wifi .winfo{font-size:.5em;color:#fff;line-height:1.25;margin-top:.6vh}
+  .match{display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:0 2.2vh;border-radius:1.2vh;margin:1.2vh .6vh;background:var(--gray);min-width:18vh}
+  .match.started{background:var(--green)}
+  .match.soon{background:var(--red)}
+  .match.done{opacity:.55}
+  .logos{display:flex;align-items:center}
+  .logos>*{margin:0 .8vh}
+  .logo{width:40vh;height:40vh;max-width:none;object-fit:contain}
+  .logo.fb{display:flex;align-items:center;justify-content:center;border-radius:50%;
+    background:#fff;color:#111;font-weight:800;font-size:.38em;width:42vh;height:42vh}
+  .vs{font-size:.34em;color:#fff;opacity:.8}
+  .team{display:flex;flex-direction:column;align-items:center}
+  .tname{display:none;font-size:.5em;color:#fff;font-weight:700;margin-top:.2vh;max-width:24vh;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1}
+  .match.started .tname{display:block}
+  /* باقي على بدايتها ساعتين أو أقل: بطاقة بعرض مباراتين، شعارات أكبر، الأسماء والعد التنازلي */
+  /* الجارية الحين بنفس مقاس القادمة: بعرض مباراتين */
+  .match.soon,.match.started{min-width:232vh;padding:0 4vh}
+  .match.soon .logo,.match.started .logo{width:44vh;height:44vh}
+  .match.soon .logos>*,.match.started .logos>*{margin:0 3vh}
+  .match.soon .tname,.match.started .tname{display:block;font-size:.5em;max-width:none;overflow:visible}
+  .match.soon .vs,.match.started .vs{font-size:.45em}
+  .match.soon .info,.match.started .info{font-size:.5em;font-weight:700}
+  .info{font-size:.5em;margin-top:.5vh;color:#fff;opacity:.95;font-variant-numeric:tabular-nums}
+  /* بطاقة العطلة: نفس أحجام نصوص المباريات عشان الكلام متناسق */
+  .holiday{display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:0 3vh;border-radius:1.2vh;margin:1.2vh .6vh;background:var(--gray);
+    box-shadow:inset 0 0 0 .5vh var(--accent);white-space:nowrap}
+  .holiday .htitle{font-size:.5em;font-weight:700;color:var(--accent);line-height:1.25}
+  .holiday .hinfo{font-size:.5em;color:#fff;line-height:1.25;margin-top:.6vh;font-variant-numeric:tabular-nums}
+  .nomatch{display:flex;align-items:center;padding:0 3vh;font-size:.5em;color:var(--muted);white-space:nowrap}
+  #empty{display:flex;align-items:center;justify-content:center;height:100%;
+    font-size:.5em;color:var(--muted)}
+
+  /* ================= لمسات الجودة والتنسيق ================= */
+  html,body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  /* خلفية متدرجة + خط ذهبي رفيع فوق الشريط مثل شرائط القنوات */
+  #bar{background:linear-gradient(180deg,#121d36 0%,#0b1426 55%,#070d1b 100%);
+    box-shadow:inset 0 .9vh 0 0 #c99a35, inset 0 1.6vh 0 0 rgba(0,0,0,.35)}
+  .cell,#matches{background:transparent}
+  /* فواصل ذهبية خفيفة بين الأقسام */
+  /* الترتيب: الباركود | الساعة | ديوانية الكويت | المباريات | الصلاة */
+  #qrcell{flex:0 0 auto;width:auto;padding:0 2.5vh}
+  #qrcell .qr{width:84vh;height:84vh;margin-top:3vh;background:#fff;border-radius:.8vh;overflow:hidden;
+    box-shadow:0 .4vh 1vh rgba(0,0,0,.45)}
+  #qrcell .qr svg{width:100%;height:100%;display:block}
+  #qrcell,#clock,#brand,#matches{border-left:.25vw solid transparent;
+    border-image:linear-gradient(180deg,transparent 18%,rgba(232,193,90,.55) 50%,transparent 82%) 1}
+  .big,.tempSide,.info,.tname,.htitle,.hinfo,.small{text-shadow:0 .35vh .8vh rgba(0,0,0,.55)}
+  /* بطاقات المباريات: تدرج ناعم وحدود خفيفة */
+  .match{background:linear-gradient(180deg,#22304f 0%,#18233d 100%);
+    box-shadow:inset 0 0 0 .25vh rgba(255,255,255,.07), 0 .6vh 1.4vh rgba(0,0,0,.35);margin-top:2.2vh;margin-bottom:1.2vh}
+  .match.soon{background:linear-gradient(180deg,#e53935 0%,#a3171b 100%);box-shadow:inset 0 0 0 .3vh rgba(255,255,255,.18),0 .6vh 1.4vh rgba(0,0,0,.4)}
+  .match.started{background:linear-gradient(180deg,#2eaa4f 0%,#16722f 100%);box-shadow:inset 0 0 0 .3vh rgba(255,255,255,.18),0 .6vh 1.4vh rgba(0,0,0,.4)}
+  /* بعد ربع ساعة من البداية: ترجع صغيرة مع إطار أحمر خفيف (مباشر) */
+  /* البطاقات العادية والجارية (بعد ربع ساعة): شفافة بدون خلفية — الألوان بس للأحمر (قبلها بساعة) والأخضر (أول ربع ساعة) */
+  .match:not(.soon):not(.started){background:transparent !important;box-shadow:none !important}
+  /* الشعارات: بدون دائرة، أكبر، بدقة عالية، مع ظل خفيف يفصلها عن الخلفية */
+  .logo{width:46vh;height:46vh;padding:0;background:none;border-radius:0;
+    filter:drop-shadow(0 .4vh .6vh rgba(0,0,0,.55));image-rendering:auto}
+  .match.soon .logo,.match.started .logo{width:50vh;height:50vh}
+  .logo.fb{width:42vh;height:42vh;border-radius:50%;background:#fff}
+  .vs{font-weight:700}
+  .holiday{background:linear-gradient(180deg,#22304f 0%,#18233d 100%);margin-top:2.2vh;margin-bottom:1.2vh}
+  /* الباركود ما يلمس الخط الذهبي: أصغر شوي ونازل تحت الخط */
+  .wifi .qr{width:84vh;height:84vh;margin-top:3vh;box-shadow:0 .4vh 1vh rgba(0,0,0,.45)}
+
+  /* ================= تنبيه الهجوم (20% بعد ديوانية الكويت) ================= */
+  /* لافتة مؤقتة 30% مكان «ديوانية الكويت» */
+  #alert{width:30%;flex:0 0 auto;border-radius:1.2vh;margin:2.2vh .8vh 1.2vh}
+  #alert.attack{background:linear-gradient(180deg,#e53935,#9e1414) !important;animation:alertPulse 1.6s ease-in-out infinite}
+  #alert.festive{background:linear-gradient(180deg,#1b5e20,#0d3b12) !important;box-shadow:inset 0 0 0 .5vh var(--accent)}
+  #alert.festive .atitle{color:var(--accent)}
+  #alert.festive .anum{background:none;font-size:.8em}
+  #alert .atitle{font-size:.6em;font-weight:800;color:#fff;line-height:1.2}
+  #alert .ainfo{font-size:.5em;color:#ffe3e3;line-height:1.2;margin-top:.4vh;font-variant-numeric:tabular-nums}
+  #alert .arow{display:flex;align-items:center;justify-content:center}
+  #alert .acol{display:flex;flex-direction:column;align-items:center}
+  #alert .anum{font-size:.95em;font-weight:900;color:#fff;margin-left:2vh;min-width:1.1em;text-align:center;
+    background:rgba(0,0,0,.25);border-radius:1vh;padding:0 1.2vh;line-height:1.1}
+  @keyframes alertPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,60,60,.0)}50%{box-shadow:0 0 2.5vh .6vh rgba(255,60,60,.75)}}
+  /* ================= رمضان (قبل الصلاة) ================= */
+  #ramadan{width:10%;flex:0 0 auto;border-radius:1.2vh;margin:2.2vh .6vh 1.2vh}
+  #ramadan .big{color:var(--accent)}
+  #ramadan .small{color:#fff;font-variant-numeric:tabular-nums}
+  #ramadan.urgent{background:linear-gradient(180deg,#e53935,#9e1414) !important}
+  #ramadan.urgent .big{color:#fff}
+  /* ================= بطاقات الطقس والأخبار (أول المباريات) ================= */
+  .wcard,.ncard{display:flex;align-items:center;padding:0 3vh;border-radius:1.2vh;margin:2.2vh .6vh 1.2vh;
+    font-size:.5em;font-weight:700;color:#fff;white-space:nowrap;
+    background:linear-gradient(180deg,#22304f 0%,#18233d 100%)}
+  .wcard{box-shadow:inset 0 0 0 .4vh #ffb74d}
+  .ncard{box-shadow:inset 0 0 0 .4vh #4fc3f7}
+  .ncard .nsrc{color:#4fc3f7;margin-left:1.2vh}
+
+  /* ================= خلفية شفافة فقط — كل شي ثاني (الألوان والخطوط والبطاقات) كما هو ================= */
+  html,body{background:transparent !important}
+  #bar{background:transparent !important;box-shadow:inset 0 .9vh 0 0 #c99a35 !important}
+  .cell,#matches{background:transparent !important}
+  /* ظل أسود ناعم حول الكلام فقط (مثل ترجمة الأفلام) — الألوان ما تتغير */
+  #clockTime,#tempVal,#clockDate,#prayerTime,#prayerName,.tname,.info,.vs,.htitle,.hinfo,.nomatch{
+    text-shadow:0 0 .5vh #000,0 0 1vh #000,0 0 1.6vh rgba(0,0,0,.85) !important}
+  #brandText{filter:drop-shadow(0 0 .35vh #000) drop-shadow(0 0 .8vh rgba(0,0,0,.9)) !important}
+</style>
+</head>
+<body>
+<div id="bar">
+  <div class="cell" id="qrcell"></div>
+  <!-- تجربة: الباركود | ديوانية الكويت | الساعة -->
+  <div class="cell" id="brand"><span id="brandText">ديوانية الكويت</span></div>
+  <div class="cell" id="alert" style="display:none"><div class="arow">
+    <div class="anum" id="alertNum"></div>
+    <div class="acol"><div class="atitle" id="alertTitle"></div><div class="ainfo" id="alertInfo"></div></div>
+  </div></div>
+  <div class="cell" id="clock"><div class="clockRow">
+    <div class="tcol"><div class="big" id="clockTime">--:--</div><div class="small" id="clockDate"></div></div>
+    <div class="tempSide" id="tempVal">--°</div>
+  </div></div>
+  <div id="matches"><div id="track"></div></div>
+  <div class="cell" id="ramadan" style="display:none"><div class="big" id="ramTitle"></div><div class="small" id="ramCount"></div></div>
+  <div class="cell" id="prayer"><div class="big" id="prayerTime">--:--</div><div class="small" id="prayerName">الصلاة</div></div>
+</div>
+
+<script>__QRLIB__</script>
+<script>
+/* ================= الإعدادات (عدّلها هنا) ================= */
+const CONFIG = {
+  city: "Kuwait", country: "Kuwait",     // مدينة أوقات الصلاة
+  lat: 29.37, lon: 47.98,                // موقع الحرارة
+  prayerMethod: 9,                       // 9 = طريقة الكويت
+  // مصدر المباريات: "demo" (تجريبي) أو "footballdata" (يحتاج مفتاح مجاني)
+  matchSource: "espn",                   // "espn" = مباريات اليوم الحقيقية بشعاراتها (مجاني بدون مفتاح)
+  footballDataToken: "",                 // ضع مفتاح football-data.org هنا
+  greenBeforeMin: 120,                   // (قديم)
+  showBeforeMin: 120,                    // المباراة تظهر قبل بدايتها بساعتين فقط
+  redBeforeMin: 60,                      // آخر ساعة: كبيرة حمراء + عد تنازلي
+  startedGreenMin: 15,                   // أول ربع ساعة بعد البداية: كبيرة خضراء، بعدها تصغر
+  fallbackEndMin: 150,                   // لو المصدر ما يقول انتهت: نخفيها بعد ساعتين ونص من البداية
+  liveDurationMin: 115,                  // مدة المباراة التقريبية بعد البداية
+  laptop: "http://192.168.1.100:8765",    // سيرفر اللابتوب (الأخبار والتنبيهات)
+  diagEverySec: 300,                     // تقرير الفحص كل 5 دقايق (للتجارب نخليه 20)
+  dustAlert: 300,                        // غبار (ميكروغرام/م³) — ومعه لازم الرؤية تكون قليلة
+  dustVisibility: 5000,                  // غبار فعلي = الرؤية أقل من 5 كم
+  heatAlert: 48,                         // حر شديد (درجة)
+  windAlert: 50,                         // رياح قوية (كم/س)
+  scrollPxPerSec: 35,                    // سرعة الحركة (بطيئة)
+  qrPauseSec: 12                         // كم ثانية يوقف الشريط عند الباركود
+};
+
+const AR_DAYS=["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+const AR_PRAYERS={Fajr:"الفجر",Dhuhr:"الظهر",Asr:"العصر",Maghrib:"المغرب",Isha:"العشاء"};
+const pad=n=>String(n).padStart(2,"0");
+/* توقيت الكويت ثابت (UTC+3) مهما كان ضبط المنطقة الزمنية في الرسيفر */
+const KW_OFFSET_MS=3*60*60*1000;
+function kw(ms){return new Date((ms===undefined?Date.now():+ms)+KW_OFFSET_MS)} // استخدم getUTC* عليه
+function fmt12(d){const k=kw(d);const H=k.getUTCHours();let h=H%12||12;return pad(h)+":"+pad(k.getUTCMinutes())+(H<12?"ص":"م")}
+function fmtHMS(ms){ms=Math.max(0,ms);const s=Math.floor(ms/1000);
+  return pad(Math.floor(s/3600))+":"+pad(Math.floor(s%3600/60))+":"+pad(s%60)}
+
+/* ---------- الساعة ---------- */
+function tickClock(){
+  const n=Date.now(), k=kw(n);
+  document.getElementById("clockTime").textContent=fmt12(n);
+  document.getElementById("clockDate").textContent=AR_DAYS[k.getUTCDay()]+" "+k.getUTCDate()+"/"+(k.getUTCMonth()+1);
+}
+
+/* ---------- الصلاة ---------- */
+let timings=null;
+async function loadPrayer(){
+  try{
+    const u=`https://api.aladhan.com/v1/timingsByCity?city=${CONFIG.city}&country=${CONFIG.country}&method=${CONFIG.prayerMethod}`;
+    const r=await (await fetch(u)).json(); timings=r.data.timings;
+    try{ hijriMonth=+r.data.date.hijri.month.number; }catch(e){}
+  }catch(e){console.warn("prayer",e)}
+  showPrayer();
+}
+
+/* ---------- رمضان: الإفطار والإمساك (يظهر بس في رمضان) ---------- */
+let hijriMonth=0;
+const FORCE_RAMADAN=/[?&]ramadan=1/.test(location.search);   // للتجربة فقط
+function showRamadan(){
+  const cell=document.getElementById("ramadan");
+  if(!timings || !(hijriMonth===9 || FORCE_RAMADAN)){ if(cell.style.display!=="none") cell.style.display="none"; return; }
+  const now=Date.now(), kn=kw(now);
+  const at=(hm,addDays)=>{const [h,m]=hm.split(":").map(Number);
+    return Date.UTC(kn.getUTCFullYear(),kn.getUTCMonth(),kn.getUTCDate()+(addDays||0),h,m)-KW_OFFSET_MS};
+  const imsak=at(timings.Imsak), iftar=at(timings.Maghrib), isha=at(timings.Isha);
+  let label=null, target=null;
+  if(now>=imsak && now<iftar){label="الإفطار";target=iftar;}          // من الإمساك لين أذان المغرب
+  else if(now>=isha){label="الإمساك";target=at(timings.Imsak,1);}     // من العشاء لين الإمساك
+  else if(now<imsak && now<iftar && kn.getUTCHours()<12){label="الإمساك";target=imsak;}
+  if(!label){ cell.style.display="none"; return; }                     // بعد الأذان تختفي
+  cell.style.display="";
+  document.getElementById("ramTitle").textContent=label+" "+fmt12(target);
+  document.getElementById("ramCount").textContent=fmtHMS(target-now);
+  cell.classList.toggle("urgent", target-now<=60000);                  // آخر دقيقة: خلفية حمراء
+}
+function showPrayer(){
+  if(!timings) return;
+  const now=Date.now(), kn=kw(now); let next=null;
+  // وقت الصلاة (بتوقيت الكويت) لليوم الحالي كلحظة زمنية حقيقية
+  const at=(hm,addDays)=>{const [h,m]=hm.split(":").map(Number);
+    return Date.UTC(kn.getUTCFullYear(),kn.getUTCMonth(),kn.getUTCDate()+(addDays||0),h,m)-KW_OFFSET_MS};
+  for(const k of Object.keys(AR_PRAYERS)){
+    const t=at(timings[k]);
+    if(t>now){next={k,t};break}
+  }
+  if(!next) next={k:"Fajr",t:at(timings.Fajr,1)};
+  // سطر فوق: اسم الصلاة ووقتها — سطر تحت: العد التنازلي
+  document.getElementById("prayerTime").textContent=AR_PRAYERS[next.k]+" "+fmt12(next.t);
+  document.getElementById("prayerName").textContent=fmtHMS(next.t-now);
+  fitPrayer();
+}
+
+/* ---------- الحرارة ---------- */
+async function loadTemp(){
+  try{
+    const u=`https://api.open-meteo.com/v1/forecast?latitude=${CONFIG.lat}&longitude=${CONFIG.lon}&current=temperature_2m,weather_code,wind_gusts_10m,visibility`;
+    const r=await (await fetch(u)).json();
+    const temp=Math.round(r.current.temperature_2m);
+    document.getElementById("tempVal").textContent=temp+"°";
+    // تنبيه الطقس: يظهر بس لما يكون فيه غبار أو مطر أو رعد أو حر شديد أو رياح قوية
+    let dust=0;
+    try{
+      const a=await (await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${CONFIG.lat}&longitude=${CONFIG.lon}&current=dust`)).json();
+      dust=a.current&&a.current.dust||0;
+    }catch(e){}
+    const code=r.current.weather_code, gust=r.current.wind_gusts_10m||0;
+    const vis=(r.current.visibility==null)?99999:r.current.visibility;
+    let w=null;
+    if(code>=95) w="⛈️ عواصف رعدية";
+    else if((code>=51&&code<=67)||(code>=80&&code<=82)) w="🌧️ أمطار";
+    // غبار حقيقي = الرؤية قليلة فعلاً (أقل من 5 كم) + غبار عالي.
+    // (نموذج الغبار لحاله يبالغ بالكويت: يقول 450 والجو صافي والرؤية 19 كم)
+    else if(vis<CONFIG.dustVisibility && dust>=CONFIG.dustAlert) w="🌫️ غبار";
+    else if(code===45||code===48) w="🌫️ ضباب";
+    else if(temp>=CONFIG.heatAlert) w="🔥 حر شديد "+temp+"°";
+    else if(gust>=CONFIG.windAlert) w="💨 رياح قوية";
+    if(w!==weatherAlert){ weatherAlert=w; buildTrack(); }
+  }catch(e){console.warn("temp",e)}
+}
+let weatherAlert=null;
+
+/* ---------- الأخبار المهمة + تنبيه الهجوم (من سيرفر اللابتوب) ---------- */
+let newsHeadline=null, newsKey="", newsSrc="none", lastNews=null;
+/* تنبيه القصف على الكويت: كل قصف جديد يظهر دقيقة وحدة ثم يختفي، ومرقّم حسب اليوم */
+const ALERT_SHOW_MS=60*1000, ALERT_FRESH_MS=15*60*1000;
+const ORD=["أول","ثاني","ثالث","رابع","خامس","سادس","سابع","ثامن","تاسع","عاشر"];
+let alertShown={}, alertQueue=[], alertCur=null, alertUntil=0, serverSkew=0;
+async function loadNews(){
+  try{
+    // أول شي: من تطبيق الرسيفر نفسه (متصل بالإنترنت 24 ساعة). لو ما توفر: من اللابتوب
+    let r=null;
+    try{ if(window.DiwanBar&&window.DiwanBar.getNews){ const s=window.DiwanBar.getNews(); if(s){ r=JSON.parse(s); newsSrc="receiver"; } } }catch(e){ newsSrc="err:"+e.message; }
+    if(!r){ r=await (await fetch(CONFIG.laptop+"/news?t="+Date.now())).json(); newsSrc="laptop"; }
+    lastNews=r;
+    newsHeadline=r.headline&&r.headline.text||null;
+    if(r.now) serverSkew=Date.now()-r.now;
+    announceInfo=r.announce||null;
+    (r.events||[]).forEach(function(ev){
+      if(alertShown[ev.id]) return;
+      alertShown[ev.id]=1;
+      // نعرض بس القصف الجديد (انكشف من أقل من 15 دقيقة) — القديم ما يطلع
+      if(Date.now()-serverSkew-ev.detected<ALERT_FRESH_MS) alertQueue.push(ev);
+    });
+  }catch(e){ /* اللابتوب مطفي */ }
+  const key=newsHeadline||"";
+  if(key!==newsKey){ newsKey=key; buildTrack(); }
+  showAlert();
+}
+/* اللافتة المؤقتة (30%) تاخذ مكان «ديوانية الكويت»:
+   القصف (دقيقة وحدة) له الأولوية، بعده إعلان العيد/رمضان (6 ساعات) */
+let announceInfo=null;
+function setBanner(mode){
+  const cell=document.getElementById("alert"), brand=document.getElementById("brand");
+  if(!mode){
+    if(cell.style.display!=="none"){ cell.style.display="none"; brand.style.display=""; fitBrand(); }
+    return false;
+  }
+  cell.className="cell "+mode; cell.style.display=""; brand.style.display="none";
+  return true;
+}
+function showAlert(){
+  const now=Date.now();
+  if(alertCur && now>alertUntil) alertCur=null;
+  if(!alertCur && alertQueue.length){ alertCur=alertQueue.shift(); alertUntil=now+ALERT_SHOW_MS; }
+  if(!alertCur){
+    const an=announceInfo;
+    if(an && now-serverSkew<an.until){
+      setBanner("festive");
+      document.getElementById("alertNum").textContent="🌙";
+      document.getElementById("alertTitle").textContent=an.kind==="eid"?"تم الإعلان عن العيد":"تم الإعلان عن رمضان";
+      document.getElementById("alertInfo").textContent=an.kind==="eid"?"عيدكم مبارك":"مبارك عليكم الشهر";
+      return;
+    }
+    setBanner(null); return;
+  }
+  setBanner("attack");
+  const a=alertCur;
+  const what=a.kind==="drone"?"هجوم مسيّرة على الكويت":a.kind==="missile"?"هجوم صاروخ على الكويت":
+             a.kind==="both"?"هجوم مسيّرات وصواريخ على الكويت":"هجوم جوي على الكويت";
+  const ord=a.n<=ORD.length?(ORD[a.n-1]+" قصف اليوم"):("القصف رقم "+a.n+" اليوم");
+  document.getElementById("alertNum").textContent=a.n;
+  document.getElementById("alertTitle").textContent=what;
+  document.getElementById("alertInfo").textContent=ord+" • الساعة "+fmt12(a.time);
+}
+
+/* ---------- المباريات ---------- */
+let matches=[];
+function demoMatches(){
+  const n=Date.now(),m=60000;
+  const T=(name,color)=>({name,color,logo:""});
+  return [
+    {home:T("الهلال","#1e5bd6"),away:T("النصر","#f2c500"),start:n-40*m},
+    {home:T("الكويت","#1d8a3a"),away:T("القادسية","#d4a017"),start:n+75*m},
+    {home:T("الأهلي","#16a34a"),away:T("الزمالك","#ffffff"),start:n+95*m},
+    {home:T("ريال مدريد","#e5e7eb"),away:T("برشلونة","#a50044"),start:n+5*60*m},
+    {home:T("الاتحاد","#facc15"),away:T("الشباب","#e5e7eb"),start:n+8*60*m},
+    {home:T("العربي","#15803d"),away:T("كاظمة","#e5e7eb"),start:n-4*60*m,done:true,score:"2-1"}
+  ];
+}
+/* اسم النادي: إذا أطول من 8 حروف نحط اختصاره المتعارف عليه */
+const KW_SHORT={"kuwait sc":"Kuwait","al-salmiya":"Salmiya","al salmiya":"Salmiya","al-arabi sc":"Arabi","al-arabi":"Arabi",
+  "al-fahaheel":"Fahaheel","al-tadhamon":"Tadhamon","al-jahra":"Jahra","al-nasr sc":"Nasr","al-sahel":"Sahel","al-shabab":"Shabab",
+  "al-yarmouk":"Yarmouk","al-salibikhaet":"Sulaibikhat","al-qadsia":"Qadsia","qadsia":"Qadsia","kazma":"Kazma","khaitan":"Khaitan"};
+function shortName(full,short,abbr){
+  full=(full||"").trim();
+  if(full.length<=8) return full;
+  const k=KW_SHORT[full.toLowerCase()]; if(k&&k.length<=11) return k;
+  if(short&&short.length<=8) return short;
+  if(abbr) return abbr;
+  const s=full.replace(/^(al[-\s]|ac\s|as\s|fc\s)/i,"").replace(/\s(sc|fc|cf|club)$/i,"");
+  return s.length<=8?s:s.slice(0,3).toUpperCase();
+}
+
+async function loadMatches(){
+  try{
+    if(CONFIG.matchSource==="espn"){
+      const d=kw(), ymd=d.getUTCFullYear()+pad(d.getUTCMonth()+1)+pad(d.getUTCDate());
+      const ymdDash=d.getUTCFullYear()+"-"+pad(d.getUTCMonth()+1)+"-"+pad(d.getUTCDate());
+      /* ===== الأندية الكبيرة (المباراة تظهر إذا فيها واحد منهم على الأقل) ===== */
+      const BIG={
+        eu:["real madrid","barcelona","atletico madrid",
+            "manchester city","manchester united","liverpool","arsenal","chelsea","tottenham",
+            "juventus","internazionale","inter milan","ac milan","napoli","as roma"],
+        ksa:["al hilal","al nassr","al ittihad","al ahli","al shabab","al qadsiah","al ettifaq"],
+        kw:["kuwait sc","qadsia","al arabi","kazma","al salmiya"]
+      };
+      const norm=n=>(n||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[-_.']/g," ").replace(/\s+/g," ").trim();
+      const isBig=(grp,n)=>{n=norm(n);return BIG[grp].some(b=>n===b||n.indexOf(b+" ")===0||n.indexOf(b)===0)};
+      /* ===== البطولات (big = أي قائمة أندية كبيرة نفلتر فيها، null = كل المباريات) ===== */
+      const LEAGUES=[
+        {id:"esp.1",big:"eu"},{id:"eng.1",big:"eu"},{id:"ita.1",big:"eu"},     // الإسباني والإنجليزي والإيطالي
+        {id:"esp.copa_del_rey",big:"eu"},{id:"eng.fa",big:"eu"},{id:"ita.coppa_italia",big:"eu"},
+        {id:"uefa.champions",big:"eu"},                                       // دوري أبطال أوروبا
+        {id:"ksa.1",big:"ksa"},{id:"ksa.kings.cup",big:"ksa"},                 // السعودي
+        {id:"afc.champions",big:null},{id:"afc.cup",big:null},                // أبطال آسيا
+        {id:"afc.asian.cup",big:null},{id:"afc.cupq",big:null},               // كأس آسيا وتصفياتها
+        {id:"fifa.world",big:null},{id:"fifa.worldq.afc",big:null},           // كأس العالم وتصفيات آسيا
+        {id:"fifa.cwc",big:null}                                              // كأس العالم للأندية
+      ];
+      const seen={};
+      matches=[];
+      const espn=id=>fetch("https://site.api.espn.com/apis/site/v2/sports/soccer/"+id+"/scoreboard?dates="+ymd)
+          .then(r=>r.json()).then(j=>j.events||[]).catch(()=>[]);
+      const results=await Promise.all(LEAGUES.map(L=>espn(L.id).then(ev=>({L,events:ev}))));
+      // كأس الخليج: نلتقطه من قائمة ESPN العامة إذا كانت البطولة موجودة فيها
+      results.push({L:{id:"gulf",big:null},events:(await espn("all")).filter(e=>/gulf|arabian/i.test((e.season&&e.season.slug)||""))});
+      // الدوري الكويتي وكأس الأمير وكأس ولي العهد من TheSportsDB (ESPN ما يغطيها)
+      const kwLeagues=[4823,5190,5189];
+      const kwRes=await Promise.all(kwLeagues.map(id=>
+        fetch("https://www.thesportsdb.com/api/v1/json/123/eventsday.php?d="+ymdDash+"&l="+id)
+          .then(r=>r.json()).then(j=>j.events||[]).catch(()=>[])));
+      {
+        const kevents=[].concat.apply([],kwRes);
+        kevents.forEach(function(e){
+          if(seen["k"+e.idEvent]) return; seen["k"+e.idEvent]=1;
+          if(!isBig("kw",e.strHomeTeam) && !isBig("kw",e.strAwayTeam)) return;
+          // أوقات الدوري الكويتي في هذا المصدر بتوقيت الكويت (+03:00)، مو توقيت عالمي
+          const ts=e.strTimestamp?Date.parse(e.strTimestamp.replace(" ","T")+(/Z|[+-]\d\d:?\d\d$/.test(e.strTimestamp)?"":"+03:00")):NaN;
+          if(isNaN(ts)) return;
+          const s=(e.strStatus||"NS").toUpperCase();
+          const done=["FT","AET","PEN","AWD","WO","CANC","PST","ABD"].indexOf(s)>=0;
+          const live=["1H","HT","2H","ET","BT","P","LIVE"].indexOf(s)>=0;
+          const b=u=>u?u+"/small":"";   // شعار بجودة أعلى
+          matches.push({home:{name:shortName(e.strHomeTeam),logo:b(e.strHomeTeamBadge)},away:{name:shortName(e.strAwayTeam),logo:b(e.strAwayTeamBadge)},
+            start:ts,live:live,done:done,score:(e.intHomeScore!=null&&e.intHomeScore!=="")?(e.intHomeScore+"-"+e.intAwayScore):""});
+        });
+      }
+      results.forEach(function(res){ res.events.forEach(function(e){
+        if(seen[e.id]) return; seen[e.id]=1;
+        const comp=(e.competitions||[])[0]; if(!comp) return;
+        const cs=comp.competitors||[];
+        const h=cs.filter(c=>c.homeAway==="home")[0]||cs[0], a=cs.filter(c=>c.homeAway==="away")[0]||cs[1];
+        if(!h||!a) return;
+        const st=(e.status&&e.status.type&&e.status.type.state)||"pre";
+        // شعار مصغّر (64 بكسل) بدل 500 بكسل عشان ما يثقل على الرسيفر
+        const small=u=>{const m=/espncdn\.com(\/i\/[^?]+)/.exec(u||"");return m?"https://a.espncdn.com/combiner/i?img="+m[1]+"&w=160&h=160":(u||"")};
+        // الاسم الكامل للنادي (مو الاختصار)
+        const t=x=>({name:shortName(x.team.displayName||x.team.name||"",x.team.shortDisplayName,x.team.abbreviation),logo:small(x.team.logo)});
+        // في الدوريات: نعرض المباراة فقط إذا فيها نادي كبير
+        if(res.L.big && !isBig(res.L.big,h.team.displayName) && !isBig(res.L.big,a.team.displayName)) return;
+        matches.push({home:t(h),away:t(a),start:new Date(e.date).getTime(),
+          live:st==="in",done:st==="post",
+          score:(st!=="pre"&&h.score!=null)?(h.score+"-"+a.score):""});
+      }); });
+    } else if(CONFIG.matchSource==="footballdata" && CONFIG.footballDataToken){
+      const r=await fetch("https://api.football-data.org/v4/matches",{headers:{"X-Auth-Token":CONFIG.footballDataToken}});
+      const j=await r.json();
+      matches=(j.matches||[]).map(x=>({
+        home:{name:x.homeTeam.shortName||x.homeTeam.name,logo:x.homeTeam.crest},
+        away:{name:x.awayTeam.shortName||x.awayTeam.name,logo:x.awayTeam.crest},
+        start:new Date(x.utcDate).getTime(),
+        done:x.status==="FINISHED",
+        live:x.status==="IN_PLAY"||x.status==="PAUSED",
+        score:x.score&&x.score.fullTime&&x.score.fullTime.home!=null?x.score.fullTime.home+"-"+x.score.fullTime.away:""
+      }));
+    } else matches=demoMatches();
+  }catch(e){console.warn("matches",e);matches=demoMatches()}
+  // المباريات المنتهية ما نعرضها
+  matches=matches.filter(m=>!m.done && (Date.now()-m.start)<=CONFIG.liveDurationMin*60000);
+  matches.sort((a,b)=>a.start-b.start);
+  buildTrack();
+}
+function logoEl(t){
+  if(t.logo){const i=document.createElement("img");i.className="logo";i.src=t.logo;i.alt=t.name;
+    i.onerror=()=>i.replaceWith(logoFallback(t));return i}
+  return logoFallback(t);
+}
+function logoFallback(t){
+  const d=document.createElement("div");d.className="logo fb";d.textContent=(t.name||"?").trim().charAt(0);
+  if(t.color)d.style.borderColor=t.color,d.style.boxShadow="inset 0 0 0 .5vh "+t.color;return d;
+}
+let cards=[];
+/* ---------- العطل الرسمية بالكويت (من ملف holidays.json على اللابتوب) ---------- */
+const HOLIDAYS=__HOLIDAYS__;
+let holCards=[];
+function kwYmd(){const k=kw();return k.getUTCFullYear()+"-"+pad(k.getUTCMonth()+1)+"-"+pad(k.getUTCDate())}
+function nextHoliday(){
+  const t=kwYmd(), [ty,tm,td]=t.split("-").map(Number);
+  for(const h of HOLIDAYS){
+    if(h.to>=t){
+      const [y,m,d]=h.from.split("-").map(Number);
+      const days=Math.round((Date.UTC(y,m-1,d)-Date.UTC(ty,tm-1,td))/864e5);
+      if(days>7) return null;   // العطلة تظهر بس قبلها بأسبوع (وفي يومها)
+      return {h,days,isToday:h.from<=t,y,m,d};
+    }
+  }
+  return null;
+}
+function makeHolidayCard(){
+  if(!nextHoliday()) return null;
+  const c=document.createElement("div");c.className="holiday";
+  const a=document.createElement("div");a.className="htitle";
+  const b=document.createElement("div");b.className="hinfo";
+  c.append(a,b);holCards.push({a,b});return c;
+}
+function updateHoliday(){
+  const n=nextHoliday(); if(!n) return;
+  const dayName=AR_DAYS[new Date(Date.UTC(n.y,n.m-1,n.d)).getUTCDay()];
+  const left=n.days===1?"بكرة":n.days===2?"بعد يومين":(n.days<=10?"بعد "+n.days+" أيام":"بعد "+n.days+" يوم");
+  for(const {a,b} of holCards){
+    // اسم العطلة بس، وتحته التاريخ والمتبقي
+    a.textContent=n.h.name;
+    b.textContent=n.isToday?"اليوم • عساكم من عواده":(dayName+" "+n.d+"/"+n.m+" • "+left);
+  }
+}
+
+/* ---------- واي فاي الضيوف: باركود يتصل بمجرد تصويره (من ملف wifi.json على اللابتوب) ---------- */
+const WIFI=__WIFI__;
+let wifiCards=[], qrSvgCache=null;
+function qrSvg(){
+  if(qrSvgCache) return qrSvgCache;
+  const esc=s=>String(s).replace(/([\\;,:"])/g,"\\$1");
+  const data="WIFI:T:"+(WIFI.security||"WPA")+";S:"+esc(WIFI.ssid)+";P:"+esc(WIFI.password)+";;";
+  const q=qrcode(0,"M"); q.addData(data); q.make();
+  const n=q.getModuleCount(), m=2; let d="";
+  for(let r=0;r<n;r++) for(let c=0;c<n;c++) if(q.isDark(r,c)) d+="M"+(c+m)+" "+(r+m)+"h1v1h-1z";
+  qrSvgCache='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+(n+2*m)+' '+(n+2*m)+'" shape-rendering="crispEdges"><rect width="100%" height="100%" fill="#fff"/><path d="'+d+'" fill="#000"/></svg>';
+  return qrSvgCache;
+}
+function makeWifiCard(){
+  if(!WIFI||!WIFI.show||!WIFI.ssid||typeof qrcode!=="function") return null;
+  const c=document.createElement("div");c.className="wifi";
+  const q=document.createElement("div");q.className="qr";q.innerHTML=qrSvg();
+  // الباركود بس، بدون كلام
+  c.append(q);wifiCards.push(c);return c;
+}
+
+/* الباركود في خانة ثابتة بأول الشريط (قبل الساعة) */
+function fillQrCell(){
+  const cell=document.getElementById("qrcell");
+  const card=makeWifiCard();
+  if(!card){cell.style.display="none";return}
+  // في تطبيق الرسيفر: الباركود ينتقل لزاوية الشاشة العلوية بنفس حجمه، ويختفي من الشريط
+  try{
+    if(window.DiwanBar&&window.DiwanBar.showCornerQr){
+      const px=Math.round(innerHeight*0.84*(window.devicePixelRatio||1));
+      window.DiwanBar.showCornerQr(qrSvg(),px);
+      cell.style.display="none"; wifiCards=[]; return;
+    }
+  }catch(e){}
+  wifiCards=[];   // ثابت، فالشريط ما يحتاج يوقف عنده
+  cell.innerHTML="";cell.appendChild(card.querySelector(".qr"));
+}
+
+/* ---------- حركة الشريط: بطيئة، وتوقف عند الباركود عشان يلحق الضيف يصوّره ---------- */
+let scrollX=0, lastT=0, pauseUntil=0, scrolling=false, halfW=0, rafId=0, pausedOn=null;
+function stopScroll(){scrolling=false;cancelAnimationFrame(rafId);scrollX=0;lastT=0;pausedOn=null;
+  const tr=document.getElementById("track");tr.style.transform="";}
+function startScroll(){
+  const tr=document.getElementById("track");halfW=tr.scrollWidth/2;scrolling=true;lastT=0;
+  // أول ما يبدأ: يوقف على الباركود (أول بطاقة) قبل ما يتحرك
+  if(wifiCards.length){pausedOn=wifiCards[0];pauseUntil=performance.now()+CONFIG.qrPauseSec*1000;}
+  rafId=requestAnimationFrame(step);
+}
+function step(t){
+  if(!scrolling) return;
+  const tr=document.getElementById("track"), box=document.getElementById("matches").getBoundingClientRect();
+  if(!lastT) lastT=t;
+  const dt=Math.min(0.1,(t-lastT)/1000); lastT=t;
+  if(t>=pauseUntil){
+    scrollX+=CONFIG.scrollPxPerSec*dt;
+    if(scrollX>=halfW) scrollX-=halfW;
+    const mid=(box.left+box.right)/2;
+    for(const w of wifiCards){
+      const r=w.getBoundingClientRect(), cm=(r.left+r.right)/2;
+      if(Math.abs(cm-mid)<CONFIG.scrollPxPerSec*0.2 && pausedOn!==w){pausedOn=w;pauseUntil=t+CONFIG.qrPauseSec*1000;}
+      else if(Math.abs(cm-mid)>box.width/4 && pausedOn===w) pausedOn=null;
+    }
+  }
+  tr.style.transform="translateX("+scrollX.toFixed(1)+"px)";
+  rafId=requestAnimationFrame(step);
+}
+
+/* يبلّغ تطبيق الرسيفر بعرض الشريط عشان يقصّر النافذة على قده */
+let lastReported=0;
+function reportWidth(){
+  const w=Math.ceil(document.getElementById("bar").getBoundingClientRect().width*(window.devicePixelRatio||1));
+  if(Math.abs(w-lastReported)<2) return; lastReported=w;
+  try{ if(window.DiwanBar&&window.DiwanBar.setWidth) window.DiwanBar.setWidth(w); }catch(e){}
+}
+
+function buildTrack(){
+  const track=document.getElementById("track");stopScroll();track.innerHTML="";cards=[];holCards=[];wifiCards=[];
+  const make=()=>{
+    const out=[];
+    if(weatherAlert){const w=document.createElement("div");w.className="wcard";w.textContent=weatherAlert;out.push(w)}
+    if(newsHeadline){const n=document.createElement("div");n.className="ncard";
+      const s=document.createElement("span");s.className="nsrc";s.textContent="كونا";
+      const t=document.createElement("span");t.textContent=newsHeadline;n.append(s,t);out.push(n)}
+    const hc=makeHolidayCard(); if(hc) out.push(hc);
+    if(!matches.length){const e=document.createElement("div");e.className="nomatch";e.textContent="لا توجد مباريات اليوم";out.push(e)}
+    return out.concat(makeMatches());
+  };
+  const makeMatches=()=>matches.map(m=>{
+    const c=document.createElement("div");c.className="match";
+    const l=document.createElement("div");l.className="logos";
+    const vs=document.createElement("span");vs.className="vs";vs.textContent="×";
+    // كل فريق: شعاره وتحته اسمه (الاسم يظهر فقط والمباراة جارية)
+    const team=t=>{const w=document.createElement("div");w.className="team";
+      const n=document.createElement("div");n.className="tname";n.textContent=t.name||"";
+      w.append(logoEl(t),n);return w};
+    l.append(team(m.home),vs,team(m.away));
+    const info=document.createElement("div");info.className="info";
+    c.append(l,info);cards.push({el:c,info,m});return c});
+  make().forEach(c=>track.append(c));
+  updateHoliday();updateCardStates(Date.now());
+  // إذا المباريات أكثر من العرض المتاح، نكرر ونحرك الشريط
+  requestAnimationFrame(()=>{
+    // عرض قسم المباريات = عرض المحتوى، بحد أقصى ما يتبقى من عرض الشاشة
+    // الشريط بعرض الشاشة كامل (الشكل القديم). إذا المحتوى أكثر من المساحة يتحرك
+    const box=document.getElementById("matches");
+    const overflow=track.scrollWidth>box.clientWidth;
+    // المباريات تبدأ من اليسار جنب وقت الصلاة (إذا ما تعبّي المساحة)
+    box.classList.toggle("fromLeft",!overflow);
+    if(overflow){
+      make().forEach(c=>track.append(c)); updateHoliday();updateCardStates(Date.now());
+      startScroll();
+    }
+  });
+}
+let relayoutPending=false;
+function updateCards(){
+  updateHoliday();
+  const now=Date.now();
+  const before=cards.map(c=>c.el.className+c.el.style.display).join("|");
+  updateCardStates(now);
+  // إذا تغيّر حجم بطاقة (صارت جارية/قادمة أو انتهت) نعيد حساب عرض الشريط
+  if(cards.length && before!==cards.map(c=>c.el.className+c.el.style.display).join("|") && !relayoutPending){
+    relayoutPending=true;
+    setTimeout(()=>{relayoutPending=false;buildTrack();},50);
+  }
+}
+function updateCardStates(now){
+  for(const {el,info,m} of cards){
+    const diff=m.start-now;
+    /* حالات المباراة:
+       later   : أكثر من ساعتين على بدايتها → مخفية
+       (عادي)  : بين ساعتين وساعة → صغيرة مع وقت البداية
+       soon    : آخر ساعة قبل البداية → كبيرة حمراء + عد تنازلي
+       started : أول ربع ساعة من البداية → كبيرة خضراء + الأسماء والنتيجة
+       live    : بعد ربع ساعة → ترجع صغيرة مع النتيجة
+       done    : انتهت (أو مر ساعتين من البداية) → مخفية */
+    let state="";
+    // ما تختفي إلا لما تنتهي فعلاً. لو المصدر ما يعطي الحالة (مثل الكويتي) نعتبرها منتهية بعد ساعتين ونص
+    // المباريات تتحدث مرة باليوم، فالحالة تنحسب من الوقت: تختفي بعد ساعتين ونص من بدايتها
+    if(m.done || (diff<0 && -diff>CONFIG.fallbackEndMin*60000)) state="done";
+    else if(diff<=0) state=(-diff<=CONFIG.startedGreenMin*60000)?"started":"live";
+    else if(diff<=CONFIG.redBeforeMin*60000) state="soon";
+    else if(diff<=CONFIG.showBeforeMin*60000) state="";
+    else state="later";
+    el.className="match "+state;
+    el.style.display=(state==="done"||state==="later")?"none":"";
+    if(state==="soon") info.textContent="⏱ "+fmtHMS(diff);
+    else if(state==="started"||state==="live") info.textContent="مباشر";   // النتائج مو مهمة
+    else if(state==="done") info.textContent=m.score?("انتهت "+m.score):"انتهت";
+    else info.textContent=fmt12(new Date(m.start));
+  }
+}
+
+/* ---------- الصلاة: بحجم الساعة، وتصغر بس إذا ما وسعتها الخانة ---------- */
+let prayerFitKey="";
+function fitPrayer(){
+  const cell=document.getElementById("prayer"), t=document.getElementById("prayerTime");
+  const key=t.textContent+"|"+cell.clientWidth;
+  if(key===prayerFitKey) return; prayerFitKey=key;
+  t.style.fontSize="1em";
+  const avail=cell.clientWidth*0.94;
+  if(t.scrollWidth>avail) t.style.fontSize=(avail/t.scrollWidth)+"em";
+}
+window.addEventListener("resize",()=>{prayerFitKey="";fitPrayer()});
+
+/* ---------- «ديوانية الكويت» تعبّي خانتها ---------- */
+function fitBrand(){
+  const cell=document.getElementById("brand"), t=document.getElementById("brandText");
+  if(!cell||!t) return;
+  t.style.transform="none"; t.style.fontSize="100px";
+  const w=t.offsetWidth, h=t.offsetHeight;
+  if(!w||!h) return;
+  const cw=cell.clientWidth*0.84, ch=cell.clientHeight*0.9;   // مسافة واضحة عن الخطوط الذهبية
+  let fs=100*ch/h;                         // أكبر حجم يناسب الارتفاع
+  const sx=cw/(w*fs/100);                  // كم نمدّها بالعرض لتعبّي الخانة
+  if(sx<1){ fs=fs*sx; t.style.fontSize=fs+"px"; return; }
+  t.style.fontSize=fs+"px";
+  t.style.transform="scaleX("+Math.min(sx,1.6)+")";
+}
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fitBrand);
+window.addEventListener("load",fitBrand);
+window.addEventListener("resize",fitBrand);
+fitBrand();
+
+/* ---------- التشغيل ---------- */
+fillQrCell();
+tickClock();loadPrayer();loadTemp();loadMatches();loadNews();
+setInterval(()=>{showRamadan();showAlert();},1000);
+setInterval(loadNews,20*1000);   // كل 20 ثانية عشان تنبيه القصف يطلع بسرعة
+
+/* تقرير فحص للابتوب كل 5 دقايق (يساعد نتأكد إن كل شي شغّال على الرسيفر) */
+function sendDiag(){
+  try{
+    const ev=lastNews&&lastNews.events?lastNews.events.length:-1;
+    const q="where="+(window.DiwanBar?"app":"browser")+"&path="+location.pathname+"&getNews="+(window.DiwanBar&&!!window.DiwanBar.getNews)+
+      "&news="+newsSrc+"&events="+ev+"&headline="+(newsHeadline?1:0)+"&announce="+(announceInfo?announceInfo.kind:"-")+
+      "&matches="+matches.length+"&temp="+document.getElementById("tempVal").textContent+
+      "&prayer="+(timings?1:0)+"&hijri="+hijriMonth+"&w="+innerWidth+"x"+innerHeight+"&dpr="+(window.devicePixelRatio||1)+
+      "&ua="+encodeURIComponent((navigator.userAgent.match(/Chrome\/[\d.]+/)||[""])[0])+
+      "&st="+encodeURIComponent((window.DiwanBar&&window.DiwanBar.status)?window.DiwanBar.status():"-");
+    const x=new XMLHttpRequest(); x.open("GET",CONFIG.laptop+"/diag?"+q); x.send();
+  }catch(e){}
+}
+setTimeout(sendDiag,30*1000); setInterval(sendDiag,CONFIG.diagEverySec*1000);
+setInterval(()=>{tickClock();updateCards();showPrayer()},1000);
+setInterval(loadPrayer,60*60*1000);
+setInterval(loadTemp,15*60*1000);
+// المباريات تتحدث مرة باليوم (المواعيد ما تتغير باليوم): عند تشغيل الرسيفر + بعد منتصف الليل بتوقيت الكويت
+let lastMatchDay=kwYmd();
+setInterval(()=>{ const d=kwYmd(); if(d!==lastMatchDay){ lastMatchDay=d; loadMatches(); } },10*60*1000);
+</script>
+</body>
+</html>
