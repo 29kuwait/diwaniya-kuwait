@@ -4,7 +4,7 @@ $ErrorActionPreference = 'Stop'
 $root = $PSScriptRoot
 $src  = Join-Path $root 'source'
 $html = [IO.File]::ReadAllText("$src\ticker-src.html", [Text.Encoding]::UTF8)
-$font = [Convert]::ToBase64String([IO.File]::ReadAllBytes("$src\aref-ruqaa-bold.woff2"))
+$font = [Convert]::ToBase64String([IO.File]::ReadAllBytes("$src\aref-ruqaa-bold.woff"))
 $html = $html.Replace('__AREF_B64__', $font)
 # العطل الرسمية من holidays.json (مرتبة حسب التاريخ)
 $hj = Get-Content (Join-Path $root 'holidays.json') -Raw -Encoding UTF8 | ConvertFrom-Json
@@ -26,8 +26,14 @@ Move-Item $tmp (Join-Path $root 'ticker.html') -Force
 # شاشة السكون (الساعة الذهبية): source\saver-src.html -> saver.html
 $sv = [IO.File]::ReadAllText("$src\saver-src.html", [Text.Encoding]::UTF8)
 $sv = $sv.Replace('__AREF_B64__', $font)
-$sv = $sv.Replace('__AMIRI_B64__', [Convert]::ToBase64String([IO.File]::ReadAllBytes("$src\amiri-bold.woff2")))
+$sv = $sv.Replace('__AMIRI_B64__', [Convert]::ToBase64String([IO.File]::ReadAllBytes("$src\amiri-bold.woff")))
 $tmp2 = Join-Path $root 'saver.html.tmp'
 [IO.File]::WriteAllText($tmp2, $sv, (New-Object Text.UTF8Encoding($false)))
 Move-Item $tmp2 (Join-Path $root 'saver.html') -Force
 "Saver: $([math]::Round($sv.Length/1KB)) KB"
+# توافق كل الأجهزة: نحوّل الصفحات لصيغة يفهمها متصفح أندرويد 5 القديم (يحتاج Node.js مرة وحدة: cd tools-legacy; npm install)
+$legacy = Join-Path $root 'tools-legacy\legacy.js'
+if ((Get-Command node -ErrorAction SilentlyContinue) -and (Test-Path (Join-Path $root 'tools-legacy\node_modules'))) {
+    node $legacy (Join-Path $root 'ticker.html') (Join-Path $root 'ticker.html')
+    node $legacy (Join-Path $root 'saver.html') (Join-Path $root 'saver.html')
+} else { "تنبيه: ما تحوّلت الصفحات للأجهزة القديمة (ثبّت Node.js وشغّل npm install داخل tools-legacy)" }

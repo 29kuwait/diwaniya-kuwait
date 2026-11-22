@@ -98,8 +98,8 @@ class H(http.server.BaseHTTPRequestHandler):
             if p == "/news":
                 body = json.dumps(news_worker.current(), ensure_ascii=False).encode("utf-8")
                 return self._send(body, "application/json; charset=utf-8")
-            if p == "/aref-ruqaa-bold.woff2":
-                return self._send(open(os.path.join(HERE, "source", "aref-ruqaa-bold.woff2"), "rb").read(), "font/woff2")
+            if p == "/aref-ruqaa-bold.woff":
+                return self._send(open(os.path.join(HERE, "source", "aref-ruqaa-bold.woff"), "rb").read(), "font/woff")
             if p == "/launcher":
                 # معاينة الواجهة الرئيسية على الكمبيوتر (بتطبيقات وهمية)
                 body = open(os.path.join(HERE, "source", "launcher.html"), "rb").read()

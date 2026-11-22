@@ -11,7 +11,7 @@ import android.webkit.WebView;
 import android.widget.FrameLayout;
 
 /**
- * شاشة سكون «شريط الديوانية»: الساعة الذهبية الفخمة فوق، والشريط تحت.
+ * شاشة سكون «شريط ديوانية الكويت»: الساعة الذهبية الفخمة فوق، والشريط تحت.
  * تُختار من الإعدادات: تفضيلات الجهاز ← شاشة التوقف (Device Preferences ← Screen saver).
  */
 public class TickerDream extends DreamService {

@@ -45,7 +45,7 @@ public class BarService extends Service {
 
     static volatile boolean running = false;
 
-    /** عنوان اللابتوب على الشبكة (سيرفر شريط الديوانية). */
+    /** عنوان اللابتوب على الشبكة (سيرفر شريط ديوانية الكويت). */
     private static final String BASE = "http://192.168.1.100:8765";
     /** ارتفاع الشريط نسبة لارتفاع الشاشة — أقل بقليل من شريط أخبار القنوات (~7-8%). */
     private static final float BAR_RATIO = 0.06f;
@@ -129,7 +129,7 @@ public class BarService extends Service {
         } catch (Throwable e) { return "?"; }
     }
 
-    private int saverMinutes() { return prefs().getInt(KEY_SAVER_MIN, 5); }
+    private int saverMinutes() { return prefs().getInt(KEY_SAVER_MIN, 2); }
 
     /** هل نطلّع شاشة التوقف؟ ما أحد ضغط الريموت من فترة + ما فيه صوت شغّال (مو فيلم/مباراة) */
     private void checkSaver() {
@@ -140,7 +140,7 @@ public class BarService extends Service {
         // داخل تطبيقات البث/الأفلام: لازم 30 دقيقة بدون ريموت (فيلم موقّف ومنسي) — مو 5 دقايق
         String fg = foregroundPkg;
         boolean home = fg == null || fg.contains("launcher") || fg.contains("appdrawer") || fg.equals(getPackageName());
-        if (!home) min = Math.max(min, prefs().getInt("saver_minutes_apps", 30));
+        if (!home) min = Math.max(min, prefs().getInt("saver_minutes_apps", 2));
         long idle = System.currentTimeMillis() - DiwanAccess.lastInput;
         if (idle < min * 60_000L) return;
         try {
@@ -239,7 +239,9 @@ public class BarService extends Service {
         w.setFocusable(false);
         w.setVerticalScrollBarEnabled(false);
         w.setHorizontalScrollBarEnabled(false);
-        String html = "<!doctype html><html><head><meta name='viewport' content='width=device-width,initial-scale=1'>"
+        w.getSettings().setJavaScriptEnabled(true);   // عقارب الساعة تتحرك
+        String html = svg.startsWith("<!doctype") ? svg   // صفحة كاملة (الساعة الشفافة)
+                : "<!doctype html><html><head><meta name='viewport' content='width=device-width,initial-scale=1'>"
                 + "<style>html,body{margin:0;height:100%;background:transparent;overflow:hidden}"
                 + "div{width:100%;height:100%;background:#fff;border-radius:4px;overflow:hidden;box-sizing:border-box}"
                 + "svg{width:100%;height:100%;display:block}</style></head><body><div>" + svg + "</div></body></html>";
@@ -303,7 +305,7 @@ public class BarService extends Service {
             createBar();
             Notification n = new Notification.Builder(this)
                     .setSmallIcon(android.R.drawable.ic_menu_day)
-                    .setContentTitle("شريط الديوانية")
+                    .setContentTitle("شريط ديوانية الكويت")
                     .setPriority(Notification.PRIORITY_MIN)
                     .build();
             startForeground(1, n);
@@ -344,7 +346,18 @@ public class BarService extends Service {
         int barH = Math.max(30, Math.round(screenH * BAR_RATIO));
         barHeight = barH;
 
+        if (BuildInfo.DEBUG) try { WebView.setWebContentsDebuggingEnabled(true); } catch (Throwable ignored) { }
         web = new WebView(this);
+        // الأجهزة القديمة (أندرويد 5-7) ما تعرف شهادات Let's Encrypt الجديدة:
+        // نقبلها بس لمواقع البيانات العامة (الطقس والمباريات)، وغيرها يُرفض.
+        web.setWebViewClient(new android.webkit.WebViewClient() {
+            @Override public void onReceivedSslError(WebView v, android.webkit.SslErrorHandler h, android.net.http.SslError e) {
+                String host = "";
+                try { host = android.net.Uri.parse(e.getUrl()).getHost(); } catch (Throwable ignored) { }
+                if (host != null && (host.endsWith("open-meteo.com") || host.endsWith("espn.com") || host.endsWith("espncdn.com")
+                        || host.endsWith("thesportsdb.com") || host.endsWith("aladhan.com"))) h.proceed(); else h.cancel();
+            }
+        });
         // خلفية شفافة: الشريط يرسم المحتوى بس، والفيديو يبان من وراه
         web.setBackgroundColor(Color.TRANSPARENT);
         web.setFocusable(false);

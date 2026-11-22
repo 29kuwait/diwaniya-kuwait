@@ -12,3 +12,4 @@ app/assets/
 # الشريط البسيط
 simple-bar/signing.jks
 simple-bar/build/
+tools-legacy/node_modules/

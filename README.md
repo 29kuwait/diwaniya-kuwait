@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="docs/icon.png" width="110" alt="ديوانية الكويت">
+
 # 🇰🇼 ديوانية الكويت — شريط التلفزيون الذكي
 ### Diwaniya Kuwait — Smart TV Overlay Ticker
 
@@ -12,6 +14,8 @@
 ![Arabic](https://img.shields.io/badge/لغة-العربية-1e5bd6)
 ![Made in Kuwait](https://img.shields.io/badge/Made%20in-Kuwait%20🇰🇼-007a3d)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
+
+### ⭐ إذا عجبك المشروع، لا تنسى تعطيه نجمة | Please give it a star ⭐
 
 <img src="docs/bar.png" alt="شريط ديوانية الكويت" width="100%">
 
@@ -34,19 +38,19 @@
 | | **الشريط الأساسي** | **الشريط البسيط** |
 |---|---|---|
 | الملف | `DiwaniyaKuwait.apk` | [`simple-bar/DiwaniyaKuwait-SimpleBar.apk`](simple-bar/) |
-| لأي جهاز | Android TV حديث (مجرّب على Z6 أندرويد 10) | الأجهزة القديمة مثل Eurostar ES4000 (أندرويد 5.1) |
-| الحجم | حوالي 210 كيلوبايت | حوالي 80 كيلوبايت |
+| لأي جهاز | **كل أجهزة Android TV من أندرويد 5 لين أحدثها** (مجرّب على Z6 أندرويد 10، وعلى رسيفر أندرويد 5.1) | الأجهزة القديمة مثل Eurostar ES4000 (أندرويد 5.1) |
+| الحجم | حوالي 350 كيلوبايت | حوالي 80 كيلوبايت |
 | ارتفاع الشريط | 6% من الشاشة | 4.6% من الشاشة |
-| الميزات | الساعة والحرارة والصلاة والمباريات والعطل ورمضان والأخبار وتنبيهات القصف والغبار وباركود الواي فاي والساعة الذهبية | الطقس والساعة والتاريخ والصلاة القادمة بعدّاد تنازلي |
+| الميزات | الساعة والحرارة والصلاة والمباريات والعطل ورمضان والأخبار وتنبيهات القصف والطقس والساعة الدائرية الشفافة والساعة الذهبية | الطقس والساعة والتاريخ والصلاة القادمة بعدّاد تنازلي |
 | يحتاج سيرفر؟ | لا (السيرفر اختياري) | لا |
 
 تفاصيل الشريط البسيط ومقاساته ومميزاته: [simple-bar/README.md](simple-bar/README.md)
 
 ### 📺 الصور
 
-| الشريط فوق البث | شاشة التوقف (الساعة الذهبية) |
-|---|---|
-| <img src="docs/tv.jpg" width="420"> | <img src="docs/saver.jpg" width="420"> |
+| الشريط فوق البث | الساعة الدائرية بالزاوية | شاشة التوقف (الساعة الذهبية) |
+|---|---|---|
+| <img src="docs/tv.jpg" width="320"> | <img src="docs/clock.png" width="180"> | <img src="docs/saver.jpg" width="320"> |
 
 ### ✨ المميزات
 
@@ -55,15 +59,17 @@
 | 🕐 | **الساعة والتاريخ** | بتوقيت الكويت الثابت (UTC+3) مهما كان ضبط الرسيفر، هجري وميلادي |
 | 🌡️ | **الحرارة** | تحديث تلقائي من open-meteo |
 | 🕌 | **الصلاة القادمة** | مع عدّاد تنازلي، بطريقة حساب الكويت (aladhan) |
-| ⚽ | **المباريات** | مباريات اليوم من ESPN بشعارات الأندية، بدون مفتاح. تظهر قبل البداية بساعتين، وتصير حمراء مع عدّاد قبل ساعة، وتصغر بعد البداية |
+| ⚽ | **المباريات** | مباريات اليوم من ESPN بشعارات الأندية، بدون مفتاح. تظهر قبل البداية بساعتين، وتصير **حمراء مع عدّاد** آخر ساعة، و**خضراء** أول ربع ساعة من المباراة، وبعدها تصغر، وتختفي لما تخلص. أسماء الأندية الطويلة تنختصر تلقائياً، والمباريات تتحدث مرة باليوم |
 | 🏖️ | **العطل الرسمية** | من ملف `holidays.json`، وتقدر تعدّله |
 | 🌙 | **رمضان والعيد** | إعلان الرؤية وإمساكية وتهنئة العيد |
-| 📰 | **أخبار كونا** | الخبر المهم فقط، بدون تكرار |
-| 🚨 | **تنبيهات الطقس** | غبار (مع شرط قلة الرؤية)، حر شديد، رياح قوية |
+| 📰 | **أخبار كونا** | الخبر المهم فقط، بدون تكرار، بشريط بسمك الشريط كامل |
+| 🚨 | **تنبيهات الطقس** | غبار (مع شرط إن الرؤية أقل من 5 كم)، عواصف رعدية، أمطار، ضباب، حر شديد، رياح قوية |
 | ⚠️ | **تنبيه الهجمات** | من عناوين الأخبار (مسيّرة / صاروخ)، يبقى 12 ساعة. **مو نظام إنذار رسمي** (شوف التنبيه تحت) |
-| 📶 | **باركود واي فاي الضيوف** | الضيف يصوّر ويتصل مباشرة |
+| ⏱️ | **ساعة دائرية شفافة بالزاوية** | فوق يمين الشاشة: إطار ذهبي، وعلامات ساعات عريضة مع ظل، وعقرب ثواني أحمر، وتحتها رقم اليوم |
 | ✍️ | **«ديوانية الكويت»** | بخط الرقعة الذهبي |
-| 🕰️ | **شاشة توقف** | ساعة ذهبية فاخرة تطلع بعد دقيقتين بدون استخدام، أو فوراً عند كتم الصوت |
+| 🕰️ | **شاشة توقف** | ساعة ذهبية فاخرة تطلع بعد دقيقتين بدون استخدام، أو فوراً عند كتم الصوت، وتختفي أول ما تضغط أي زر |
+| 🎯 | **فوق البث بس** | يطلع فوق تطبيقات البث (IPTV، يوتيوب، شاهد، نتفلكس، VLC...)، وشاشة الرسيفر الرئيسية ما تتغير |
+| 📱 | **كل الأجهزة** | يشتغل حتى على الرسيفرات القديمة (أندرويد 5): الصفحات تتحوّل لصيغة يفهمها المتصفح القديم، والخطوط بصيغة WOFF |
 | 🔌 | **يشتغل لحاله** | على الرسيفر بدون لابتوب، ويبدأ تلقائياً مع تشغيل الجهاز |
 
 > ### ⚠️ تنبيه مهم
@@ -77,7 +83,15 @@
 4. فعّل له **«إمكانية الوصول»** عشان تشتغل الساعة الذهبية.
 5. خلاص، الشريط يطلع تلقائياً فوق تطبيقات البث ✅
 
-مجرّب على رسيفر **Z6 أندرويد 10**، ويفترض يشتغل على أي جهاز Android TV.
+مجرّب على رسيفر **Z6 أندرويد 10** وعلى رسيفر **أندرويد 5.1**.
+
+> **الرسيفرات القديمة (أندرويد 5):** بعضها يلغي صلاحية «إمكانية الوصول» بعد كل تحديث للتطبيق، فرجّع فعّلها. وإذا منفذ adb (5555) مفتوح، تقدر تفعّل كل شي من الكمبيوتر:
+> ```
+> adb install -r DiwaniyaKuwait.apk
+> adb shell appops set com.diwaniya.kuwait GET_USAGE_STATS allow
+> adb shell settings put secure enabled_accessibility_services com.diwaniya.kuwait/com.diwaniya.kuwait.DiwanAccess
+> adb shell settings put secure accessibility_enabled 1
+> ```
 
 > أندرويد 11 وما فوق يشدد على صلاحية الظهور فوق التطبيقات (`SYSTEM_ALERT_WINDOW`). إذا ما ظهر الشريط، فعّلها من إعدادات التطبيقات.
 
@@ -87,13 +101,13 @@
 |---|---|
 | `source/ticker-src.html` | تصميم الشريط وإعداداته (`CONFIG`: المدينة، حدود الحر والغبار والرياح، سرعة الحركة...) |
 | `source/saver-src.html` | الساعة الذهبية |
-| `wifi.json` | اسم شبكة الضيوف وكلمة السر للباركود (`show: true` لتفعيله) |
+| `wifi.json` | اختياري: باركود واي فاي الضيوف لنسخة المتصفح (`show: true` لتفعيله) |
 | `holidays.json` | العطل الرسمية |
 | `apps.json` | التطبيقات اللي يظهر فوقها الشريط، ومدة شاشة التوقف |
 
 **تغيير اسم الديوانية:** غيّر النص «ديوانية الكويت» في `source/ticker-src.html` و `source/saver-src.html`، ثم شغّل `publish.ps1`.
 
-**بناء التطبيق بنفسك:** `app/build.ps1` يبني الـ APK بدون Gradle (aapt2 ← javac ← d8 ← apksigner)، ويحتاج JDK و Android SDK (build-tools 34 + platform 22).
+**بناء التطبيق بنفسك:** أول مرة ثبّت Node.js وشغّل `npm install` داخل `tools-legacy` (يحوّل الصفحات لصيغة تشتغل على الأجهزة القديمة)، وبعدها `publish.ps1`، ثم `app/build.ps1` يبني الـ APK بدون Gradle (aapt2 ← javac ← d8 ← apksigner)، ويحتاج JDK و Android SDK (build-tools 34 + platform 22).
 
 **سيرفر اختياري على الكمبيوتر:** `server.py` (بايثون، منفذ 8765) لتحديث الشريط عن بُعد. عدّل العنوان `192.168.1.100` في `BarService.java` و `ticker-src.html` إلى عنوان جهازك.
 
@@ -132,10 +146,10 @@ A free, open-source Android app that shows a thin transparent bar at the bottom 
 | | **Main bar** | **Simple Bar** |
 |---|---|---|
 | File | `DiwaniyaKuwait.apk` | [`simple-bar/DiwaniyaKuwait-SimpleBar.apk`](simple-bar/) |
-| For | Modern Android TV (tested on Z6, Android 10) | Older boxes such as the Eurostar ES4000 (Android 5.1) |
-| Size | about 210 KB | about 80 KB |
+| For | **Every Android TV from Android 5 up** (tested on Z6 Android 10 and an Android 5.1 box) | Older boxes such as the Eurostar ES4000 (Android 5.1) |
+| Size | about 350 KB | about 80 KB |
 | Bar height | 6% of the screen | 4.6% of the screen |
-| Features | Clock, temperature, prayer, matches, holidays, Ramadan, news, attack and dust alerts, Wi-Fi QR and the gold clock | Weather, clock and date, next prayer with a countdown |
+| Features | Clock, temperature, prayer, matches, holidays, Ramadan, news, attack and weather alerts, the transparent corner clock and the gold clock | Weather, clock and date, next prayer with a countdown |
 | Needs a server? | No (the server is optional) | No |
 
 Details, sizes and features of the Simple Bar: [simple-bar/README.md](simple-bar/README.md)
@@ -147,15 +161,17 @@ Details, sizes and features of the Simple Bar: [simple-bar/README.md](simple-bar
 | 🕐 | **Clock and date** | Fixed Kuwait time (UTC+3) regardless of the box's timezone, Hijri and Gregorian |
 | 🌡️ | **Temperature** | Auto-updated from open-meteo |
 | 🕌 | **Next prayer** | With a countdown, using the Kuwait calculation method (aladhan) |
-| ⚽ | **Football** | Today's matches from ESPN with club logos, no API key. Shown 2 hours before kickoff, turns red with a countdown in the last hour, shrinks after kickoff |
+| ⚽ | **Football** | Today's matches from ESPN with club logos, no API key. Shown 2 hours before kickoff, turns **red with a countdown** in the last hour and **green** for the first 15 minutes, then shrinks and hides when finished. Long club names are abbreviated; fixtures refresh once a day |
 | 🏖️ | **Public holidays** | From an editable `holidays.json` |
 | 🌙 | **Ramadan and Eid** | Moon-sighting announcements, imsakiyah and Eid greetings |
-| 📰 | **KUNA news** | Important headlines only, no repeats |
-| 🚨 | **Weather alerts** | Dust (with a low-visibility condition), extreme heat, strong wind |
+| 📰 | **KUNA news** | Important headlines only, no repeats, as a full-height card |
+| 🚨 | **Weather alerts** | Dust (only when visibility is under 5 km), thunderstorms, rain, fog, extreme heat, strong wind |
 | ⚠️ | **Attack alerts** | Based on news headlines (drone / missile), kept for 12 hours. **Not an official warning system** (see the note below) |
-| 📶 | **Guest Wi-Fi QR** | Guests scan and connect |
+| ⏱️ | **Transparent corner clock** | Top-right analog clock with a gold frame, bold shadowed hour marks, a red second hand and today's date |
 | ✍️ | **"Diwaniya Kuwait"** | In golden Ruqaa calligraphy |
-| 🕰️ | **Screensaver** | A luxurious gold clock after 2 idle minutes, or instantly on mute |
+| 🕰️ | **Screensaver** | A luxurious gold clock after 2 idle minutes, or instantly on mute; any key dismisses it |
+| 🎯 | **Streaming apps only** | Appears over IPTV, YouTube, Shahid, Netflix, VLC...; the home screen is untouched |
+| 📱 | **All devices** | Works on old Android 5 boxes too: pages are transpiled to ES5 with polyfills and fonts ship as WOFF |
 | 🔌 | **Runs standalone** | On the box with no PC, and starts on boot |
 
 > ### ⚠️ Important
@@ -169,7 +185,7 @@ Details, sizes and features of the Simple Bar: [simple-bar/README.md](simple-bar
 4. Grant **Accessibility** for the gold-clock screensaver.
 5. Done. The bar appears over your streaming apps automatically ✅
 
-Tested on a **Z6 box with Android 10**; it should work on any Android TV device. On Android 11+, you may need to allow *Display over other apps* (`SYSTEM_ALERT_WINDOW`).
+Tested on a **Z6 box (Android 10)** and an **Android 5.1 box**. Some Android 5 boxes turn Accessibility off after every app update; re-enable it (or use the adb commands in the Arabic section). On Android 11+, you may need to allow *Display over other apps* (`SYSTEM_ALERT_WINDOW`).
 
 ### 🛠️ Customize
 
@@ -177,13 +193,13 @@ Tested on a **Z6 box with Android 10**; it should work on any Android TV device.
 |---|---|
 | `source/ticker-src.html` | Bar design and settings (`CONFIG`: city, heat/dust/wind thresholds, scroll speed...) |
 | `source/saver-src.html` | The gold clock |
-| `wifi.json` | Guest Wi-Fi name and password for the QR (set `show: true`) |
+| `wifi.json` | Optional: guest Wi-Fi QR for the browser version (set `show: true`) |
 | `holidays.json` | Public holidays |
 | `apps.json` | Apps the bar appears over, and screensaver timing |
 
 **Rename the diwaniya:** change the text "ديوانية الكويت" in `source/ticker-src.html` and `source/saver-src.html`, then run `publish.ps1`.
 
-**Build it yourself:** `app/build.ps1` builds the APK without Gradle (aapt2 → javac → d8 → zipalign → apksigner). It needs a JDK and the Android SDK (build-tools 34 + platform 22).
+**Build it yourself:** first install Node.js and run `npm install` in `tools-legacy` (makes the pages work on old devices), then run `publish.ps1`, then `app/build.ps1` builds the APK without Gradle (aapt2 → javac → d8 → zipalign → apksigner). It needs a JDK and the Android SDK (build-tools 34 + platform 22).
 
 **Optional PC server:** `server.py` (Python, port 8765) for remote updates. Change `192.168.1.100` in `BarService.java` and `ticker-src.html` to your PC's address.
 

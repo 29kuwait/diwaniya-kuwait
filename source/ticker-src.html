@@ -23,7 +23,7 @@
   /* الحرارة صارت داخل خانة الساعة، والمساحة رجعت للمباريات */
   #prayer{width:10%;flex:0 0 auto}
   /* خط عربي مزخرف (Aref Ruqaa) مدمج داخل الملف — يشتغل بدون إنترنت */
-  @font-face{font-family:"DiwanCalli";src:url(data:font/woff2;base64,__AREF_B64__) format("woff2");font-weight:700}
+  @font-face{font-family:"DiwanCalli";src:url(data:font/woff;base64,__AREF_B64__) format("woff");font-weight:700}
   #brand{width:13%;flex:0 0 auto;background:transparent;overflow:visible}
   #brandText{display:inline-block;font-family:"DiwanCalli",serif;font-weight:700;font-size:1.25em;line-height:1.15;white-space:nowrap;
     padding:0 .05em .05em;transform-origin:center center;
@@ -151,6 +151,7 @@
   .wcard{box-shadow:inset 0 0 0 .4vh #ffb74d}
   .ncard{box-shadow:inset 0 0 0 .4vh #4fc3f7}
   .ncard .nsrc{color:#4fc3f7;margin-left:1.2vh}
+  .ncard{margin:0 .6vh;border-radius:0}   /* شريط كونا بسمك الشريط كامل */
 
   /* ================= خلفية شفافة فقط — كل شي ثاني (الألوان والخطوط والبطاقات) كما هو ================= */
   html,body{background:transparent !important}
@@ -454,7 +455,7 @@ async function loadMatches(){
         if(!h||!a) return;
         const st=(e.status&&e.status.type&&e.status.type.state)||"pre";
         // شعار مصغّر (64 بكسل) بدل 500 بكسل عشان ما يثقل على الرسيفر
-        const small=u=>{const m=/espncdn\.com(\/i\/[^?]+)/.exec(u||"");return m?"https://a.espncdn.com/combiner/i?img="+m[1]+"&w=160&h=160":(u||"")};
+        const small=u=>{const m=/espncdn\.com(\/i\/[^?]+)/.exec(u||"");return m?"https://a.espncdn.com/combiner/i?img="+m[1]+"&w=100&h=100":(u||"")};
         // الاسم الكامل للنادي (مو الاختصار)
         const t=x=>({name:shortName(x.team.displayName||x.team.name||"",x.team.shortDisplayName,x.team.abbreviation),logo:small(x.team.logo)});
         // في الدوريات: نعرض المباراة فقط إذا فيها نادي كبير
@@ -547,18 +548,50 @@ function makeWifiCard(){
 }
 
 /* الباركود في خانة ثابتة بأول الشريط (قبل الساعة) */
+/* ساعة دائرية شفافة (زجاج + إطار ذهبي) تطلع بزاوية الشاشة فوق — بتوقيت الكويت */
+function cornerClockHtml(){
+  var ticks="";
+  for(var i=0;i<60;i++){var a=i*6,big=i%5===0;
+    // علامات الساعات (1،2،3...) أعرض وأطول، والدقايق رفيعة
+    ticks+='<line x1="100" y1="'+(big?13:16)+'" x2="100" y2="'+(big?32:21)+'" stroke="'+(big?'#f6dc8e':'rgba(243,214,138,.6)')+'" stroke-width="'+(big?6.5:1.2)+'" stroke-linecap="round" transform="rotate('+a+' 100 100)"/>';}
+  return '<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>html,body{margin:0;height:100%;background:transparent;overflow:hidden}svg{width:100%;height:100%;display:block}</style></head><body>'+
+  '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><defs>'+
+  '<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbe7a8"/><stop offset=".5" stop-color="#d9a940"/><stop offset="1" stop-color="#9c7020"/></linearGradient>'+
+  '<radialGradient id="f" cx=".5" cy=".38" r=".65"><stop offset="0" stop-color="#ffffff" stop-opacity=".16"/><stop offset=".7" stop-color="#0b1430" stop-opacity=".22"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></radialGradient>'+
+  // ظل أسود ناعم يوضّح العلامات والعقارب فوق أي صورة
+  '<filter id="s" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur in="SourceAlpha" stdDeviation="1.6"/><feOffset dx="0" dy="1.4" result="o"/>'+
+  '<feComponentTransfer in="o" result="d"><feFuncA type="linear" slope=".85"/></feComponentTransfer><feMerge><feMergeNode in="d"/><feMergeNode in="SourceGraphic"/></feMerge></filter>'+
+  '</defs>'+
+  '<circle cx="100" cy="100" r="94" fill="url(#f)"/>'+
+  '<circle cx="100" cy="100" r="94" fill="none" stroke="url(#g)" stroke-width="5" filter="url(#s)"/>'+
+  '<circle cx="100" cy="100" r="87" fill="none" stroke="rgba(243,214,138,.45)" stroke-width="1"/>'+
+  '<g filter="url(#s)">'+ticks+'</g>'+
+  '<path d="M70 42 A62 62 0 0 1 130 42" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="7" stroke-linecap="round"/>'+
+  // تاريخ اليوم صغير تحت
+  '<text id="dt" x="100" y="146" text-anchor="middle" font-family="Tahoma,Arial,sans-serif" font-size="22" font-weight="700" fill="#f6dc8e" filter="url(#s)"></text>'+
+  '<g filter="url(#s)"><line id="h" x1="100" y1="108" x2="100" y2="56" stroke="#f0cf73" stroke-width="6" stroke-linecap="round"/>'+
+  '<line id="m" x1="100" y1="112" x2="100" y2="32" stroke="#f6dc8e" stroke-width="4" stroke-linecap="round"/>'+
+  '<line id="sc" x1="100" y1="120" x2="100" y2="26" stroke="#e53935" stroke-width="1.6" stroke-linecap="round"/>'+
+  '<circle cx="100" cy="100" r="6" fill="url(#g)"/><circle cx="100" cy="100" r="2.4" fill="#e53935"/></g></svg>'+
+  '<script>function t(){var d=new Date(Date.now()+10800000),h=d.getUTCHours()%12,m=d.getUTCMinutes(),s=d.getUTCSeconds();'+
+  'document.getElementById("h").setAttribute("transform","rotate("+(h*30+m*0.5)+" 100 100)");'+
+  'document.getElementById("m").setAttribute("transform","rotate("+(m*6+s*0.1)+" 100 100)");'+
+  'document.getElementById("sc").setAttribute("transform","rotate("+(s*6)+" 100 100)");'+
+  'var M=["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];'+
+  'document.getElementById("dt").textContent=d.getUTCDate();}t();setInterval(t,1000);<\/script></body></html>';
+}
 function fillQrCell(){
   const cell=document.getElementById("qrcell");
-  const card=makeWifiCard();
-  if(!card){cell.style.display="none";return}
-  // في تطبيق الرسيفر: الباركود ينتقل لزاوية الشاشة العلوية بنفس حجمه، ويختفي من الشريط
+  // في تطبيق الرسيفر: ساعة دائرية شفافة بزاوية الشاشة فوق (بدل الباركود)
   try{
     if(window.DiwanBar&&window.DiwanBar.showCornerQr){
-      const px=Math.round(innerHeight*0.84*(window.devicePixelRatio||1));
-      window.DiwanBar.showCornerQr(qrSvg(),px);
+      const px=Math.round(innerHeight*0.84*3*(window.devicePixelRatio||1));
+      window.DiwanBar.showCornerQr(cornerClockHtml(),px);
       cell.style.display="none"; wifiCards=[]; return;
     }
   }catch(e){}
+  const card=makeWifiCard();
+  if(!card){cell.style.display="none";return}
   wifiCards=[];   // ثابت، فالشريط ما يحتاج يوقف عنده
   cell.innerHTML="";cell.appendChild(card.querySelector(".qr"));
 }

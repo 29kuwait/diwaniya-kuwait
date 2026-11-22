@@ -27,14 +27,14 @@ New-Item -ItemType Directory -Force "$proj\assets" | Out-Null
 Copy-Item (Join-Path (Split-Path $realProj -Parent) 'ticker.html') "$proj\assets\ticker.html" -Force
 Copy-Item (Join-Path (Split-Path $realProj -Parent) 'saver.html') "$proj\assets\saver.html" -Force
 Copy-Item (Join-Path (Split-Path $realProj -Parent) 'source\launcher.html') "$proj\assets\launcher.html" -Force
-Copy-Item (Join-Path (Split-Path $realProj -Parent) 'source\aref-ruqaa-bold.woff2') "$proj\assets\aref-ruqaa-bold.woff2" -Force
+Copy-Item (Join-Path (Split-Path $realProj -Parent) 'source\aref-ruqaa-bold.woff') "$proj\assets\aref-ruqaa-bold.woff" -Force
 
 & "$bt\aapt2.exe" compile --dir "$proj\res" -o "$out\res.zip"
 if ($LASTEXITCODE) { throw 'aapt2 compile failed' }
 
 & "$bt\aapt2.exe" link -o "$out\base.apk" -I $jar --manifest "$proj\AndroidManifest.xml" `
     -A "$proj\assets" --min-sdk-version 21 --target-sdk-version 22 `
-    --version-code 19 --version-name 3.3 "$out\res.zip"
+    --version-code 20 --version-name 3.4 "$out\res.zip"
 if ($LASTEXITCODE) { throw 'aapt2 link failed' }
 
 $src = Get-ChildItem "$proj\src" -Recurse -Filter *.java | ForEach-Object FullName

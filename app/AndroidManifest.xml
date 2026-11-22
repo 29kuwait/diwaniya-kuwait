@@ -17,7 +17,7 @@
     <uses-feature android:name="android.software.leanback" android:required="false" />
 
     <application
-        android:label="شريط الديوانية"
+        android:label="شريط ديوانية الكويت"
         android:icon="@drawable/ic_launcher"
         android:banner="@drawable/banner"
         android:allowBackup="false"
@@ -26,7 +26,7 @@
         <!-- فتح التطبيق من القائمة: يشغّل الشريط أو يوقفه -->
         <activity
             android:name=".MainActivity"
-            android:label="شريط الديوانية"
+            android:label="شريط ديوانية الكويت"
             android:theme="@android:style/Theme.NoDisplay"
             android:excludeFromRecents="true">
             <intent-filter>
@@ -65,7 +65,7 @@
         <service
             android:name=".TickerDream"
             android:exported="true"
-            android:label="شريط الديوانية"
+            android:label="شريط ديوانية الكويت"
             android:permission="android.permission.BIND_DREAM_SERVICE">
             <intent-filter>
                 <action android:name="android.service.dreams.DreamService" />

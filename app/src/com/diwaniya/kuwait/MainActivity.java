@@ -18,7 +18,7 @@ public class MainActivity extends Activity {
         BarService.setHiddenUntilBoot(this, false);
         startService(new Intent(this, BarService.class));
         if (!BarService.hasUsageAccess(this)) {
-            Toast.makeText(this, "فعّل «شريط الديوانية» في القائمة عشان يظهر فوق تطبيقات البث فقط",
+            Toast.makeText(this, "فعّل «شريط ديوانية الكويت» في القائمة عشان يظهر فوق تطبيقات البث فقط",
                     Toast.LENGTH_LONG).show();
             try {
                 startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
@@ -27,7 +27,7 @@ public class MainActivity extends Activity {
             }
         } else if (!DiwanAccess.isEnabled(this)) {
             // لشاشة التوقف الخاصة: لازم نعرف متى ما أحد يستخدم الريموت
-            Toast.makeText(this, "فعّل «شاشة توقف شريط الديوانية» في إمكانية الوصول عشان تشتغل الساعة الذهبية",
+            Toast.makeText(this, "فعّل «شاشة توقف شريط ديوانية الكويت» في إمكانية الوصول عشان تشتغل الساعة الذهبية",
                     Toast.LENGTH_LONG).show();
             try {
                 startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
@@ -35,7 +35,7 @@ public class MainActivity extends Activity {
                 Toast.makeText(this, "افتح: الإعدادات ← تفضيلات الجهاز ← إمكانية الوصول", Toast.LENGTH_LONG).show();
             }
         } else {
-            Toast.makeText(this, "شريط الديوانية شغّال", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "شريط ديوانية الكويت شغّال", Toast.LENGTH_SHORT).show();
         }
         finish();
     }

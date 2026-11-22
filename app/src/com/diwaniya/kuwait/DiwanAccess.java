@@ -40,7 +40,7 @@ public class DiwanAccess extends AccessibilityService {
     /** رقم زر ميوت إضافي (لو ريموتك يرسل رقم غير معتاد) — يتغيّر من apps.json: mute_key */
     static volatile int extraMuteKey = -999;
     /** زر البيت يفتح واجهتنا (من apps.json: home_override) */
-    static volatile boolean homeOverride = true;
+    static volatile boolean homeOverride = false;
 
     @Override
     public boolean onKeyEvent(KeyEvent e) {

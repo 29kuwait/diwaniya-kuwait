@@ -2,5 +2,6 @@ package com.diwaniya.kuwait;
 
 /** رقم النسخة — يطلع في تقرير الفحص */
 final class BuildInfo {
-    static final String VERSION = "3.3";
+    static final String VERSION = "3.4";
+    static final boolean DEBUG = false;
 }
