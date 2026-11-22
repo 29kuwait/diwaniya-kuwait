@@ -548,7 +548,7 @@ function makeWifiCard(){
 }
 
 /* الباركود في خانة ثابتة بأول الشريط (قبل الساعة) */
-/* ساعة دائرية شفافة (زجاج + إطار ذهبي) تطلع بزاوية الشاشة فوق — بتوقيت الكويت */
+/* ساعة شفافة (علامات الوقت والعقارب فقط، بدون دايرة) تطلع بزاوية الشاشة فوق — بتوقيت الكويت */
 function cornerClockHtml(){
   var ticks="";
   for(var i=0;i<60;i++){var a=i*6,big=i%5===0;
@@ -562,11 +562,7 @@ function cornerClockHtml(){
   '<filter id="s" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur in="SourceAlpha" stdDeviation="1.6"/><feOffset dx="0" dy="1.4" result="o"/>'+
   '<feComponentTransfer in="o" result="d"><feFuncA type="linear" slope=".85"/></feComponentTransfer><feMerge><feMergeNode in="d"/><feMergeNode in="SourceGraphic"/></feMerge></filter>'+
   '</defs>'+
-  '<circle cx="100" cy="100" r="94" fill="url(#f)"/>'+
-  '<circle cx="100" cy="100" r="94" fill="none" stroke="url(#g)" stroke-width="5" filter="url(#s)"/>'+
-  '<circle cx="100" cy="100" r="87" fill="none" stroke="rgba(243,214,138,.45)" stroke-width="1"/>'+
   '<g filter="url(#s)">'+ticks+'</g>'+
-  '<path d="M70 42 A62 62 0 0 1 130 42" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="7" stroke-linecap="round"/>'+
   // تاريخ اليوم صغير تحت
   '<text id="dt" x="100" y="146" text-anchor="middle" font-family="Tahoma,Arial,sans-serif" font-size="22" font-weight="700" fill="#f6dc8e" filter="url(#s)"></text>'+
   '<g filter="url(#s)"><line id="h" x1="100" y1="108" x2="100" y2="56" stroke="#f0cf73" stroke-width="6" stroke-linecap="round"/>'+
@@ -585,7 +581,7 @@ function fillQrCell(){
   // في تطبيق الرسيفر: ساعة دائرية شفافة بزاوية الشاشة فوق (بدل الباركود)
   try{
     if(window.DiwanBar&&window.DiwanBar.showCornerQr){
-      const px=Math.round(innerHeight*0.84*3*(window.devicePixelRatio||1));
+      const px=Math.round(innerHeight*0.84*3.3*(window.devicePixelRatio||1));   // الساعة: أكبر 10%
       window.DiwanBar.showCornerQr(cornerClockHtml(),px);
       cell.style.display="none"; wifiCards=[]; return;
     }

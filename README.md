@@ -41,14 +41,14 @@
 | لأي جهاز | **كل أجهزة Android TV من أندرويد 5 لين أحدثها** (مجرّب على Z6 أندرويد 10، وعلى رسيفر أندرويد 5.1) | الأجهزة القديمة مثل Eurostar ES4000 (أندرويد 5.1) |
 | الحجم | حوالي 350 كيلوبايت | حوالي 80 كيلوبايت |
 | ارتفاع الشريط | 6% من الشاشة | 4.6% من الشاشة |
-| الميزات | الساعة والحرارة والصلاة والمباريات والعطل ورمضان والأخبار وتنبيهات القصف والطقس والساعة الدائرية الشفافة والساعة الذهبية | الطقس والساعة والتاريخ والصلاة القادمة بعدّاد تنازلي |
+| الميزات | الساعة والحرارة والصلاة والمباريات والعطل ورمضان والأخبار وتنبيهات القصف والطقس والساعة الشفافة بالزاوية والساعة الذهبية | الطقس والساعة والتاريخ والصلاة القادمة بعدّاد تنازلي |
 | يحتاج سيرفر؟ | لا (السيرفر اختياري) | لا |
 
 تفاصيل الشريط البسيط ومقاساته ومميزاته: [simple-bar/README.md](simple-bar/README.md)
 
 ### 📺 الصور
 
-| الشريط فوق البث | الساعة الدائرية بالزاوية | شاشة التوقف (الساعة الذهبية) |
+| الشريط فوق البث | الساعة الشفافة بالزاوية | شاشة التوقف (الساعة الذهبية) |
 |---|---|---|
 | <img src="docs/tv.jpg" width="320"> | <img src="docs/clock.png" width="180"> | <img src="docs/saver.jpg" width="320"> |
 
@@ -65,7 +65,7 @@
 | 📰 | **أخبار كونا** | الخبر المهم فقط، بدون تكرار، بشريط بسمك الشريط كامل |
 | 🚨 | **تنبيهات الطقس** | غبار (مع شرط إن الرؤية أقل من 5 كم)، عواصف رعدية، أمطار، ضباب، حر شديد، رياح قوية |
 | ⚠️ | **تنبيه الهجمات** | من عناوين الأخبار (مسيّرة / صاروخ)، يبقى 12 ساعة. **مو نظام إنذار رسمي** (شوف التنبيه تحت) |
-| ⏱️ | **ساعة دائرية شفافة بالزاوية** | فوق يمين الشاشة: إطار ذهبي، وعلامات ساعات عريضة مع ظل، وعقرب ثواني أحمر، وتحتها رقم اليوم |
+| ⏱️ | **ساعة شفافة بالزاوية** | فوق يمين الشاشة، بدون دايرة: علامات وقت ذهبية عريضة مع ظل، وعقارب ذهبية، وعقرب ثواني أحمر، وتحتها رقم اليوم |
 | ✍️ | **«ديوانية الكويت»** | بخط الرقعة الذهبي |
 | 🕰️ | **شاشة توقف** | ساعة ذهبية فاخرة تطلع بعد دقيقتين بدون استخدام، أو فوراً عند كتم الصوت، وتختفي أول ما تضغط أي زر |
 | 🎯 | **فوق البث بس** | يطلع فوق تطبيقات البث (IPTV، يوتيوب، شاهد، نتفلكس، VLC...)، وشاشة الرسيفر الرئيسية ما تتغير |
@@ -167,7 +167,7 @@ Details, sizes and features of the Simple Bar: [simple-bar/README.md](simple-bar
 | 📰 | **KUNA news** | Important headlines only, no repeats, as a full-height card |
 | 🚨 | **Weather alerts** | Dust (only when visibility is under 5 km), thunderstorms, rain, fog, extreme heat, strong wind |
 | ⚠️ | **Attack alerts** | Based on news headlines (drone / missile), kept for 12 hours. **Not an official warning system** (see the note below) |
-| ⏱️ | **Transparent corner clock** | Top-right analog clock with a gold frame, bold shadowed hour marks, a red second hand and today's date |
+| ⏱️ | **Transparent corner clock** | Top-right, frameless: bold shadowed gold hour marks, gold hands, a red second hand and today's day number |
 | ✍️ | **"Diwaniya Kuwait"** | In golden Ruqaa calligraphy |
 | 🕰️ | **Screensaver** | A luxurious gold clock after 2 idle minutes, or instantly on mute; any key dismisses it |
 | 🎯 | **Streaming apps only** | Appears over IPTV, YouTube, Shahid, Netflix, VLC...; the home screen is untouched |

@@ -34,7 +34,7 @@ if ($LASTEXITCODE) { throw 'aapt2 compile failed' }
 
 & "$bt\aapt2.exe" link -o "$out\base.apk" -I $jar --manifest "$proj\AndroidManifest.xml" `
     -A "$proj\assets" --min-sdk-version 21 --target-sdk-version 22 `
-    --version-code 20 --version-name 3.4 "$out\res.zip"
+    --version-code 21 --version-name 3.5 "$out\res.zip"
 if ($LASTEXITCODE) { throw 'aapt2 link failed' }
 
 $src = Get-ChildItem "$proj\src" -Recurse -Filter *.java | ForEach-Object FullName
