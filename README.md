@@ -101,6 +101,7 @@
 
 - **لا ترفع باسورد الواي فاي الحقيقي على GitHub.** الملف `wifi.json` في المشروع فيه قيم وهمية (`CHANGE-ME`). عدّله على نسختك المحلية فقط، ولا تعمل له commit بعد ما تكتب الباسورد.
 - لا ترفع مفاتيح التوقيع (`*.jks` و `*.keystore`)، وهي أصلاً مستثناة في `.gitignore`.
+- `server.py` بدون باسورد، ومصمم لشبكة البيت فقط. **لا تفتح المنفذ 8765 على الإنترنت** (لا تسوي Port Forwarding). الكود ينظف أي نص يوصله من الشبكة قبل ما يكتبه.
 
 ### 🗺️ خطة التطوير
 
@@ -190,6 +191,7 @@ Tested on a **Z6 box with Android 10**; it should work on any Android TV device.
 
 - **Never commit your real Wi-Fi password.** `wifi.json` ships with placeholder values (`CHANGE-ME`). Edit it only on your local copy and do not commit it afterwards.
 - Never commit signing keys (`*.jks`, `*.keystore`); they are already in `.gitignore`.
+- `server.py` has no password and is meant for your home network only. **Never expose port 8765 to the internet** (no port forwarding). The code sanitizes any text it receives from the network before writing it.
 
 ### 🗺️ Roadmap
 

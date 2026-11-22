@@ -8,7 +8,7 @@
 
 للإيقاف/التشغيل: ملف state.txt فيه on أو off (تغيّره أيقونات سطح المكتب).
 """
-import http.server, json, os, sys, datetime
+import http.server, json, os, re, sys, datetime
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -91,6 +91,8 @@ class H(http.server.BaseHTTPRequestHandler):
                 # تقرير فحص من الرسيفر: من وين يجيب الأخبار، وهل واجهة التطبيق موجودة، إلخ
                 from urllib.parse import unquote
                 q = unquote(self.path.split("?", 1)[1]) if "?" in self.path else ""
+                # أي جهاز على الشبكة يقدر يرسل هنا، فننظف النص ونحدد طوله (ما نسمح بأسطر جديدة)
+                q = "".join(ch if ch.isprintable() else " " for ch in q)[:500]
                 log(f"{self.client_address[0]} DIAG {q}")
                 return self._send(b"ok", "text/plain")
             if p == "/news":
@@ -136,13 +138,16 @@ iframe{position:fixed;left:0;right:0;bottom:0;width:100%;height:6vh;border:0;bac
                     if part.startswith("pkg="):
                         from urllib.parse import unquote
                         pkg = unquote(part[4:])
+                # اسم حزمة أندرويد فقط (حروف وأرقام ونقاط)، عشان ما أحد يكتب أشياء ثانية في الملف
+                if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_.]{0,127}", pkg):
+                    pkg = ""
                 if pkg:
                     seen = set()
                     try:
                         seen = set(open(SEEN, encoding="utf-8").read().split())
                     except OSError:
                         pass
-                    if pkg not in seen:
+                    if pkg not in seen and len(seen) < 2000:
                         with open(SEEN, "a", encoding="utf-8") as f:
                             f.write(pkg + "\n")
                     log(f"{self.client_address[0]} foreground {pkg}")
