@@ -15,6 +15,8 @@
 
 <img src="docs/bar.png" alt="شريط ديوانية الكويت" width="100%">
 
+🌐 **الموقع | Website:** https://29kuwait.github.io/diwaniya-kuwait/
+
 [العربية](#العربية) · [English](#english)
 
 </div>
