@@ -8,3 +8,7 @@ __pycache__/
 *.tmp
 app/build/
 app/assets/
+
+# الشريط البسيط
+simple-bar/signing.jks
+simple-bar/build/

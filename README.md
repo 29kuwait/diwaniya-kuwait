@@ -27,6 +27,19 @@
 
 تطبيق أندرويد مجاني ومفتوح المصدر، يعرض شريطاً شفافاً أسفل شاشة التلفزيون فوق تطبيقات البث (IPTV وغيرها)، بدون ما يقطع عليك المشاهدة. صُمم لاحتياج **الديوانيات والبيوت في الكويت**: تعرف الوقت ووقت الصلاة والمباراة الجاية وآخر الأخبار والتنبيهات، وأنت تتفرج.
 
+### 🧩 شريطان في مشروع واحد
+
+| | **الشريط الأساسي** | **الشريط البسيط** |
+|---|---|---|
+| الملف | `DiwaniyaKuwait.apk` | [`simple-bar/DiwaniyaKuwait-SimpleBar.apk`](simple-bar/) |
+| لأي جهاز | Android TV حديث (مجرّب على Z6 أندرويد 10) | الأجهزة القديمة مثل Eurostar ES4000 (أندرويد 5.1) |
+| الحجم | حوالي 210 كيلوبايت | حوالي 80 كيلوبايت |
+| ارتفاع الشريط | 6% من الشاشة | 4.6% من الشاشة |
+| الميزات | الساعة والحرارة والصلاة والمباريات والعطل ورمضان والأخبار وتنبيهات القصف والغبار وباركود الواي فاي والساعة الذهبية | الطقس والساعة والتاريخ والصلاة القادمة بعدّاد تنازلي |
+| يحتاج سيرفر؟ | لا (السيرفر اختياري) | لا |
+
+تفاصيل الشريط البسيط ومقاساته ومميزاته: [simple-bar/README.md](simple-bar/README.md)
+
 ### 📺 الصور
 
 | الشريط فوق البث | شاشة التوقف (الساعة الذهبية) |
@@ -110,6 +123,19 @@
 ### 🎯 What is it?
 
 A free, open-source Android app that shows a thin transparent bar at the bottom of your TV, on top of streaming apps (IPTV and others), without interrupting what you watch. It is designed for **Kuwaiti diwaniyas and homes**: see the time, the next prayer, the next match, the latest news and alerts while you watch.
+
+### 🧩 Two bars in one project
+
+| | **Main bar** | **Simple Bar** |
+|---|---|---|
+| File | `DiwaniyaKuwait.apk` | [`simple-bar/DiwaniyaKuwait-SimpleBar.apk`](simple-bar/) |
+| For | Modern Android TV (tested on Z6, Android 10) | Older boxes such as the Eurostar ES4000 (Android 5.1) |
+| Size | about 210 KB | about 80 KB |
+| Bar height | 6% of the screen | 4.6% of the screen |
+| Features | Clock, temperature, prayer, matches, holidays, Ramadan, news, attack and dust alerts, Wi-Fi QR and the gold clock | Weather, clock and date, next prayer with a countdown |
+| Needs a server? | No (the server is optional) | No |
+
+Details, sizes and features of the Simple Bar: [simple-bar/README.md](simple-bar/README.md)
 
 ### ✨ Features
 

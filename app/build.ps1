@@ -34,7 +34,7 @@ if ($LASTEXITCODE) { throw 'aapt2 compile failed' }
 
 & "$bt\aapt2.exe" link -o "$out\base.apk" -I $jar --manifest "$proj\AndroidManifest.xml" `
     -A "$proj\assets" --min-sdk-version 21 --target-sdk-version 22 `
-    --version-code 18 --version-name 3.2 "$out\res.zip"
+    --version-code 19 --version-name 3.3 "$out\res.zip"
 if ($LASTEXITCODE) { throw 'aapt2 link failed' }
 
 $src = Get-ChildItem "$proj\src" -Recurse -Filter *.java | ForEach-Object FullName
@@ -56,8 +56,10 @@ if ($LASTEXITCODE) { throw 'zipalign failed' }
 # لا تحذف signing.jks: بدونه ما تقدر تحدّث التطبيق فوق النسخة المثبتة
 $ks = "$proj\signing.jks"
 if (-not (Test-Path $ks)) {
+    $ErrorActionPreference = 'Continue'   # keytool يكتب رسائله على stderr
     & "$jbin\keytool.exe" -genkeypair -keystore $ks -alias diwaniya -keyalg RSA -keysize 2048 -validity 10000 `
         -storepass diwaniya2026 -keypass diwaniya2026 -dname 'CN=DiwaniyaKuwait' | Out-Null
+    $ErrorActionPreference = 'Stop'
 }
 Copy-Item $ks "$realProj\signing.jks" -Force
 $tmpApk = "$out\DiwaniyaKuwait.apk"

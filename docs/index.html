@@ -74,6 +74,9 @@ footer a{color:var(--gold2)}
 <div class="grid" id="feat"></div>
 <div class="warn"><b data-i="warnT"></b> <span data-i="warnD"></span></div>
 
+<h2 data-i="twoT"></h2><p class="sub" data-i="twoD"></p>
+<div class="grid" id="two"></div>
+
 <h2 data-i="shotT"></h2>
 <div class="shots">
   <figure><img src="tv.jpg" alt=""><figcaption data-i="cap1"></figcaption></figure>
@@ -102,6 +105,8 @@ featT:["المميزات","Features"],
 featD:["كل شي يظهر فوق البث بدون ما يقطع عليك المشاهدة.","Everything appears over your stream without interrupting it."],
 warnT:["تنبيه مهم:","Important:"],
 warnD:["تنبيهات الأخبار (مثل الهجمات) مصدرها عناوين أخبار منشورة، وليست نظام إنذار رسمي. قد تتأخر وقد تخطئ، فلا تعتمد عليها للسلامة وتابع الجهات الرسمية.","News-based alerts (such as attacks) come from published headlines, not an official warning system. They can be late or wrong; do not rely on them for safety and follow official authorities."],
+twoT:["شريطان في مشروع واحد","Two bars in one project"],
+twoD:["الأساسي للأجهزة الحديثة، والبسيط للأجهزة القديمة.","The main one for modern boxes, the simple one for older boxes."],
 shotT:["الصور","Screenshots"],
 cap1:["الشريط فوق البث","The bar over a stream"],
 cap2:["شاشة التوقف: الساعة الذهبية","Screensaver: the gold clock"],
@@ -126,6 +131,10 @@ const F=[
 ["🔌","يشتغل لحاله","Runs standalone","بدون لابتوب، ويبدأ مع تشغيل الجهاز.","No PC needed; starts on boot."],
 ["✍️","خط الرقعة","Ruqaa calligraphy","«ديوانية الكويت» بخط ذهبي.","The name in golden calligraphy."]
 ];
+const TW=[
+["الشريط الأساسي","Main bar","الساعة والحرارة والصلاة والمباريات والأخبار وتنبيهات القصف والغبار والساعة الذهبية. ارتفاعه 6% من الشاشة.","Clock, temperature, prayer, matches, news, attack and dust alerts and the gold clock. Height: 6% of the screen.","https://github.com/29kuwait/diwaniya-kuwait/raw/main/DiwaniyaKuwait.apk"],
+["الشريط البسيط","Simple Bar","للأجهزة القديمة مثل Eurostar ES4000 (أندرويد 5.1): الطقس والساعة والصلاة القادمة. ارتفاعه 4.6% من الشاشة.","For older boxes such as the Eurostar ES4000 (Android 5.1): weather, clock and next prayer. Height: 4.6% of the screen.","https://github.com/29kuwait/diwaniya-kuwait/tree/main/simple-bar"]
+];
 const ST=[
 ["نزّل ملف DiwaniyaKuwait.apk على الرسيفر (مثلاً بتطبيق Downloader).","Download DiwaniyaKuwait.apk on your box (for example with the Downloader app)."],
 ["ثبّته وافتحه مرة وحدة.","Install it and open it once."],
@@ -147,6 +156,7 @@ function apply(){
   const d=document.documentElement;d.lang=L;d.dir=i?"ltr":"rtl";d.dataset.theme=TH;
   document.querySelectorAll("[data-i]").forEach(e=>e.textContent=S[e.dataset.i][i]);
   $("feat").innerHTML=F.map(f=>'<div class="card"><div class="i">'+f[0]+'</div><h3>'+f[1+i]+'</h3><p>'+f[3+i]+'</p></div>').join("");
+  $("two").innerHTML=TW.map(t=>'<div class="card"><h3>'+t[i]+'</h3><p>'+t[2+i]+'</p><p style="margin-top:12px"><a class="btn2" href="'+t[4]+'">'+(i?"Download / details":"تحميل / تفاصيل")+'</a></p></div>').join("");
   $("steps").innerHTML=ST.map(s=>"<li>"+s[i]+"</li>").join("");
   $("road").innerHTML=R.map(r=>'<div class="card"><div class="i">'+r[0]+'</div><h3>'+r[1+i]+'</h3></div>').join("");
   $("lang").textContent=i?"العربية":"English";
