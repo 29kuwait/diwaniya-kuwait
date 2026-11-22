@@ -1,0 +1,29 @@
+name: بلاغ مشكلة أو اقتراح | Bug or suggestion
+description: الشريط ما يظهر، أو عندك فكرة تحسين | The bar does not show, or you have an idea
+title: "[بلاغ] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: وش المشكلة أو الفكرة؟ | What is the problem or idea?
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: نوع الرسيفر | Box model
+      placeholder: Z6
+    validations:
+      required: true
+  - type: input
+    id: android
+    attributes:
+      label: نسخة الأندرويد | Android version
+      placeholder: "10"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: كيف نكرر المشكلة؟ | How can we reproduce it?
