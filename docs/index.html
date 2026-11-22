@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ديوانية الكويت | Diwaniya Kuwait</title>
+<meta name="description" content="شريط شفاف يركب على رسيفر الأندرويد والتلفزيون: الوقت والصلاة والمباريات والأخبار والتنبيهات للديوانيات والبيوت في الكويت.">
+<meta name="theme-color" content="#0a0e17">
+<meta property="og:title" content="ديوانية الكويت | Diwaniya Kuwait">
+<meta property="og:description" content="شريط تلفزيون ذكي للديوانيات والبيوت في الكويت. A smart TV overlay bar for Kuwaiti diwaniyas and homes.">
+<meta property="og:image" content="https://29kuwait.github.io/diwaniya-kuwait/bar.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 20'><rect width='30' height='6.67' fill='%23007a3d'/><rect y='6.67' width='30' height='6.66' fill='%23fff'/><rect y='13.33' width='30' height='6.67' fill='%23ce1126'/><path d='M0 0L7.5 6.67V13.33L0 20Z'/></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0e17;--bg2:#0f1626;--card:#111a2c;--line:#1f2b44;--text:#eef2fb;--muted:#93a1bd;--gold:#d8b45a;--gold2:#f2d98c;--glow:#1a2745;--btntext:#1a1405;--warn:#ef8a8a}
+:root[data-theme=light]{--bg:#f7f4ec;--bg2:#fffdf8;--card:#fff;--line:#e5dcc3;--text:#1b2233;--muted:#5d6577;--gold:#a8821f;--gold2:#7d5f10;--glow:#efe4c2;--btntext:#fff;--warn:#b33a3a}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 500px at 50% -120px,var(--glow) 0,transparent 70%),var(--bg);color:var(--text);font-family:Tajawal,Inter,Tahoma,sans-serif;line-height:1.8}
+html[lang=en] body{font-family:Inter,Tajawal,sans-serif;line-height:1.65}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+.top{display:flex;justify-content:space-between;align-items:center;padding:16px 0}
+.logo{color:var(--gold2);font-weight:800}
+.ctrl{display:flex;gap:8px}
+.ctrl button{background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:6px 14px;cursor:pointer;font:inherit;font-size:14px}
+.ctrl button:hover{border-color:var(--gold);color:var(--gold2)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+header{text-align:center;padding:36px 0 20px}
+.badge{display:inline-block;border:1px solid var(--gold);color:var(--gold2);padding:4px 16px;border-radius:999px;font-size:13px;margin-bottom:16px}
+h1{font-size:clamp(30px,6vw,54px);font-weight:800;margin:0 0 12px;background:linear-gradient(90deg,var(--gold2),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1.3}
+.flag{width:46px;height:31px;vertical-align:middle;border-radius:5px;margin-inline-start:12px;box-shadow:0 2px 10px rgba(0,0,0,.35)}
+header p{color:var(--muted);font-size:clamp(16px,2.4vw,20px);max-width:680px;margin:0 auto 24px}
+.cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{color:var(--btntext);background:linear-gradient(90deg,var(--gold2),var(--gold));padding:12px 26px;border-radius:12px;text-decoration:none;font-weight:700}
+.btn2{color:var(--text);border:1px solid var(--line);background:var(--card);padding:12px 26px;border-radius:12px;text-decoration:none;font-weight:700}
+.btn2:hover{border-color:var(--gold)}
+.hero{margin:34px auto 0;max-width:920px}
+.hero img{width:100%;border-radius:16px;border:1px solid var(--line);box-shadow:0 20px 60px rgba(0,0,0,.4)}
+h2{font-size:28px;margin:56px 0 6px;color:var(--gold2)}
+.sub{color:var(--muted);margin:0 0 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{background:linear-gradient(180deg,var(--bg2),var(--card));border:1px solid var(--line);border-radius:18px;padding:18px}
+.card:hover{border-color:var(--gold)}
+.card .i{font-size:26px}
+.card h3{margin:6px 0 2px;font-size:18px}
+.card p{margin:0;color:var(--muted);font-size:14.5px}
+.shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.shots figure{margin:0}
+.shots img{width:100%;border-radius:14px;border:1px solid var(--line)}
+.shots figcaption{color:var(--muted);font-size:14px;margin-top:6px;text-align:center}
+.warn{border:1px solid var(--warn);background:rgba(239,138,138,.08);border-radius:16px;padding:16px 20px;margin-top:28px}
+.warn b{color:var(--warn)}
+ol{padding-inline-start:22px}
+ol li{margin:8px 0}
+.note{color:var(--muted);font-size:14px}
+footer{border-top:1px solid var(--line);text-align:center;color:var(--muted);padding:28px 16px;margin-top:56px;font-size:14px}
+footer a{color:var(--gold2)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="top"><span class="logo">Diwaniya Kuwait</span><div class="ctrl"><button id="lang" type="button">English</button><button id="theme" type="button" aria-label="theme">☾</button></div></div>
+<header>
+  <span class="badge" data-i="badge"></span>
+  <h1><span data-i="title"></span><svg class="flag" viewBox="0 0 30 20" role="img" aria-label="Kuwait"><rect width="30" height="6.67" fill="#007a3d"/><rect y="6.67" width="30" height="6.66" fill="#fff"/><rect y="13.33" width="30" height="6.67" fill="#ce1126"/><path d="M0 0L7.5 6.67V13.33L0 20Z" fill="#000"/></svg></h1>
+  <p data-i="sub"></p>
+  <div class="cta"><a class="btn" href="https://github.com/29kuwait/diwaniya-kuwait/raw/main/DiwaniyaKuwait.apk" data-i="dl"></a><a class="btn2" href="https://github.com/29kuwait/diwaniya-kuwait" data-i="gh"></a></div>
+  <div class="hero"><img src="bar.png" alt="Diwaniya Kuwait bar"></div>
+</header>
+
+<h2 data-i="featT"></h2><p class="sub" data-i="featD"></p>
+<div class="grid" id="feat"></div>
+<div class="warn"><b data-i="warnT"></b> <span data-i="warnD"></span></div>
+
+<h2 data-i="shotT"></h2>
+<div class="shots">
+  <figure><img src="tv.jpg" alt=""><figcaption data-i="cap1"></figcaption></figure>
+  <figure><img src="saver.jpg" alt=""><figcaption data-i="cap2"></figcaption></figure>
+</div>
+
+<h2 data-i="instT"></h2>
+<ol id="steps"></ol>
+<p class="note" data-i="instN"></p>
+
+<h2 data-i="roadT"></h2><p class="sub" data-i="roadD"></p>
+<div class="grid" id="road"></div>
+</div>
+<footer>
+  <span data-i="foot"></span><br>
+  <a href="https://github.com/29kuwait/diwaniya-kuwait">GitHub</a> · MIT · <span data-i="made"></span> ❤️
+</footer>
+<script>
+const S={
+badge:["مجاني · مفتوح المصدر","Free · Open source"],
+title:["ديوانية الكويت","Diwaniya Kuwait"],
+sub:["شريط شفاف وأنيق يركب على رسيفر الأندرويد والتلفزيون، فيه الوقت والصلاة والمباريات والأخبار والتنبيهات المهمة للديوانيات والبيوت في الكويت.","A thin, transparent bar for Android TV boxes with the time, prayer, football, news and important alerts for Kuwaiti diwaniyas and homes."],
+dl:["تحميل التطبيق (APK)","Download the app (APK)"],
+gh:["الكود على GitHub","Code on GitHub"],
+featT:["المميزات","Features"],
+featD:["كل شي يظهر فوق البث بدون ما يقطع عليك المشاهدة.","Everything appears over your stream without interrupting it."],
+warnT:["تنبيه مهم:","Important:"],
+warnD:["تنبيهات الأخبار (مثل الهجمات) مصدرها عناوين أخبار منشورة، وليست نظام إنذار رسمي. قد تتأخر وقد تخطئ، فلا تعتمد عليها للسلامة وتابع الجهات الرسمية.","News-based alerts (such as attacks) come from published headlines, not an official warning system. They can be late or wrong; do not rely on them for safety and follow official authorities."],
+shotT:["الصور","Screenshots"],
+cap1:["الشريط فوق البث","The bar over a stream"],
+cap2:["شاشة التوقف: الساعة الذهبية","Screensaver: the gold clock"],
+instT:["التثبيت","Install"],
+instN:["مجرّب على رسيفر Z6 أندرويد 10، ويفترض يشتغل على أي جهاز Android TV. على أندرويد 11 وما فوق قد تحتاج تفعيل «الظهور فوق التطبيقات».","Tested on a Z6 box with Android 10; it should work on any Android TV device. On Android 11+ you may need to allow Display over other apps."],
+roadT:["قيد التطوير","In progress"],
+roadD:["أفكار نشتغل عليها، وما هي جاهزة بعد.","Ideas we are working on; not ready yet."],
+foot:["الكود مفتوح تحت رخصة MIT. الأسماء والخدمات ملك لأصحابها.","Open source under the MIT license. Names and services belong to their owners."],
+made:["صنع في الكويت","Made in Kuwait"]
+};
+const F=[
+["🕐","الساعة والتاريخ","Clock and date","بتوقيت الكويت، هجري وميلادي.","Kuwait time, Hijri and Gregorian."],
+["🌡️","الحرارة","Temperature","تحديث تلقائي.","Updated automatically."],
+["🕌","الصلاة القادمة","Next prayer","مع عدّاد تنازلي بطريقة الكويت.","With a countdown, Kuwait method."],
+["⚽","المباريات","Football","مباريات اليوم بشعارات الأندية، وتتلون قبل البداية.","Today's matches with club logos, color-coded before kickoff."],
+["🏖️","العطل الرسمية","Public holidays","من ملف تقدر تعدّله.","From a file you can edit."],
+["🌙","رمضان والعيد","Ramadan and Eid","إعلان الرؤية وإمساكية وتهنئة.","Moon sighting, imsakiyah and greetings."],
+["📰","أخبار كونا","KUNA news","الخبر المهم فقط بدون تكرار.","Important headlines only, no repeats."],
+["🚨","تنبيهات الطقس","Weather alerts","غبار وحر شديد ورياح قوية.","Dust, extreme heat and strong wind."],
+["📶","باركود واي فاي الضيوف","Guest Wi-Fi QR","الضيف يصوّر ويتصل مباشرة.","Guests scan and connect."],
+["🕰️","شاشة توقف ذهبية","Gold screensaver","ساعة فاخرة بعد دقيقتين بدون استخدام.","A luxurious clock after 2 idle minutes."],
+["🔌","يشتغل لحاله","Runs standalone","بدون لابتوب، ويبدأ مع تشغيل الجهاز.","No PC needed; starts on boot."],
+["✍️","خط الرقعة","Ruqaa calligraphy","«ديوانية الكويت» بخط ذهبي.","The name in golden calligraphy."]
+];
+const ST=[
+["نزّل ملف DiwaniyaKuwait.apk على الرسيفر (مثلاً بتطبيق Downloader).","Download DiwaniyaKuwait.apk on your box (for example with the Downloader app)."],
+["ثبّته وافتحه مرة وحدة.","Install it and open it once."],
+["فعّل «الوصول إلى بيانات الاستخدام».","Grant Usage access."],
+["فعّل «إمكانية الوصول» عشان تشتغل الساعة الذهبية.","Grant Accessibility for the gold clock."],
+["خلاص، الشريط يطلع تلقائياً فوق تطبيقات البث.","Done. The bar appears over your streaming apps."]
+];
+const R=[
+["⚙️","شاشة إعدادات داخل التطبيق","In-app settings screen"],
+["📱","لوحة تحكم من الجوال","Phone control panel"],
+["🛡️","حماية شاشات OLED","OLED burn-in protection"],
+["🎨","ثيمات جاهزة","Ready-made themes"]
+];
+let L="ar",TH="dark";
+try{L=localStorage.getItem("lang")==="en"?"en":"ar";TH=localStorage.getItem("theme")==="light"?"light":"dark"}catch(e){}
+const $=id=>document.getElementById(id);
+function apply(){
+  const i=L==="en"?1:0;
+  const d=document.documentElement;d.lang=L;d.dir=i?"ltr":"rtl";d.dataset.theme=TH;
+  document.querySelectorAll("[data-i]").forEach(e=>e.textContent=S[e.dataset.i][i]);
+  $("feat").innerHTML=F.map(f=>'<div class="card"><div class="i">'+f[0]+'</div><h3>'+f[1+i]+'</h3><p>'+f[3+i]+'</p></div>').join("");
+  $("steps").innerHTML=ST.map(s=>"<li>"+s[i]+"</li>").join("");
+  $("road").innerHTML=R.map(r=>'<div class="card"><div class="i">'+r[0]+'</div><h3>'+r[1+i]+'</h3></div>').join("");
+  $("lang").textContent=i?"العربية":"English";
+  $("theme").textContent=TH==="dark"?"☀":"☾";
+  document.title=i?"Diwaniya Kuwait":"ديوانية الكويت | Diwaniya Kuwait";
+}
+$("lang").onclick=()=>{L=L==="en"?"ar":"en";try{localStorage.setItem("lang",L)}catch(e){}apply()};
+$("theme").onclick=()=>{TH=TH==="dark"?"light":"dark";try{localStorage.setItem("theme",TH)}catch(e){}apply()};
+apply();
+</script>
+</body>
+</html>
