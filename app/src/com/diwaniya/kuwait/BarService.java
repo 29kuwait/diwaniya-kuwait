@@ -354,8 +354,10 @@ public class BarService extends Service {
             @Override public void onReceivedSslError(WebView v, android.webkit.SslErrorHandler h, android.net.http.SslError e) {
                 String host = "";
                 try { host = android.net.Uri.parse(e.getUrl()).getHost(); } catch (Throwable ignored) { }
-                if (host != null && (host.endsWith("open-meteo.com") || host.endsWith("espn.com") || host.endsWith("espncdn.com")
-                        || host.endsWith("thesportsdb.com") || host.endsWith("aladhan.com"))) h.proceed(); else h.cancel();
+                boolean ok = false;   // الاسم نفسه أو نطاق فرعي منه بالضبط (مو أي اسم ينتهي بنفس الحروف)
+                if (host != null) for (String d : new String[]{"open-meteo.com", "espn.com", "espncdn.com", "thesportsdb.com", "aladhan.com"})
+                    if (host.equals(d) || host.endsWith("." + d)) { ok = true; break; }
+                if (ok) h.proceed(); else h.cancel();
             }
         });
         // خلفية شفافة: الشريط يرسم المحتوى بس، والفيديو يبان من وراه

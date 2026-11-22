@@ -83,6 +83,7 @@ footer a{color:var(--gold2)}
 <div class="shots">
   <figure><img src="tv.jpg" alt=""><figcaption data-i="cap1"></figcaption></figure>
   <figure><img src="saver.jpg" alt=""><figcaption data-i="cap2"></figcaption></figure>
+  <figure><img src="clock.png" alt=""><figcaption data-i="cap3"></figcaption></figure>
 </div>
 
 <h2 data-i="instT"></h2>
@@ -108,12 +109,13 @@ featD:["كل شي يظهر فوق البث بدون ما يقطع عليك ال�
 warnT:["تنبيه مهم:","Important:"],
 warnD:["تنبيهات الأخبار (مثل الهجمات) مصدرها عناوين أخبار منشورة، وليست نظام إنذار رسمي. قد تتأخر وقد تخطئ، فلا تعتمد عليها للسلامة وتابع الجهات الرسمية.","News-based alerts (such as attacks) come from published headlines, not an official warning system. They can be late or wrong; do not rely on them for safety and follow official authorities."],
 twoT:["شريطان في مشروع واحد","Two bars in one project"],
-twoD:["الأساسي للأجهزة الحديثة، والبسيط للأجهزة القديمة.","The main one for modern boxes, the simple one for older boxes."],
+twoD:["الأساسي يشتغل على كل الأجهزة من أندرويد 5، والبسيط أخف وأبسط.","The main one runs on every box from Android 5 up; the simple one is lighter."],
 shotT:["الصور","Screenshots"],
 cap1:["الشريط فوق البث","The bar over a stream"],
 cap2:["شاشة التوقف: الساعة الذهبية","Screensaver: the gold clock"],
+cap3:["الساعة الشفافة بالزاوية","The transparent corner clock"],
 instT:["التثبيت","Install"],
-instN:["مجرّب على رسيفر Z6 أندرويد 10، ويفترض يشتغل على أي جهاز Android TV. على أندرويد 11 وما فوق قد تحتاج تفعيل «الظهور فوق التطبيقات».","Tested on a Z6 box with Android 10; it should work on any Android TV device. On Android 11+ you may need to allow Display over other apps."],
+instN:["مجرّب على رسيفر Z6 أندرويد 10 وعلى رسيفر أندرويد 5.1. بعض أجهزة أندرويد 5 تلغي «إمكانية الوصول» بعد كل تحديث، فرجّع فعّلها. وعلى أندرويد 11 وما فوق قد تحتاج تفعيل «الظهور فوق التطبيقات».","Tested on a Z6 box (Android 10) and an Android 5.1 box. Some Android 5 boxes turn Accessibility off after each update; re-enable it. On Android 11+ you may need to allow Display over other apps."],
 roadT:["قيد التطوير","In progress"],
 roadD:["أفكار نشتغل عليها، وما هي جاهزة بعد.","Ideas we are working on; not ready yet."],
 foot:["الكود مفتوح تحت رخصة MIT. الأسماء والخدمات ملك لأصحابها.","Open source under the MIT license. Names and services belong to their owners."],
@@ -123,18 +125,19 @@ const F=[
 ["🕐","الساعة والتاريخ","Clock and date","بتوقيت الكويت، هجري وميلادي.","Kuwait time, Hijri and Gregorian."],
 ["🌡️","الحرارة","Temperature","تحديث تلقائي.","Updated automatically."],
 ["🕌","الصلاة القادمة","Next prayer","مع عدّاد تنازلي بطريقة الكويت.","With a countdown, Kuwait method."],
-["⚽","المباريات","Football","مباريات اليوم بشعارات الأندية، وتتلون قبل البداية.","Today's matches with club logos, color-coded before kickoff."],
+["⚽","المباريات","Football","بشعارات الأندية: حمراء مع عدّاد آخر ساعة، وخضراء أول ربع ساعة، وتختفي لما تخلص.","With club logos: red with a countdown in the last hour, green for the first 15 minutes, hidden when finished."],
 ["🏖️","العطل الرسمية","Public holidays","من ملف تقدر تعدّله.","From a file you can edit."],
 ["🌙","رمضان والعيد","Ramadan and Eid","إعلان الرؤية وإمساكية وتهنئة.","Moon sighting, imsakiyah and greetings."],
-["📰","أخبار كونا","KUNA news","الخبر المهم فقط بدون تكرار.","Important headlines only, no repeats."],
-["🚨","تنبيهات الطقس","Weather alerts","غبار وحر شديد ورياح قوية.","Dust, extreme heat and strong wind."],
-["📶","باركود واي فاي الضيوف","Guest Wi-Fi QR","الضيف يصوّر ويتصل مباشرة.","Guests scan and connect."],
-["🕰️","شاشة توقف ذهبية","Gold screensaver","ساعة فاخرة بعد دقيقتين بدون استخدام.","A luxurious clock after 2 idle minutes."],
+["📰","أخبار كونا","KUNA news","الخبر المهم فقط بدون تكرار، بشريط بسمك الشريط.","Important headlines only, no repeats, as a full-height card."],
+["🚨","تنبيهات الطقس","Weather alerts","غبار (مع قلة الرؤية) وعواصف رعدية وأمطار وضباب وحر شديد ورياح قوية.","Dust (with low visibility), thunderstorms, rain, fog, extreme heat and strong wind."],
+["⏱️","ساعة شفافة بالزاوية","Transparent corner clock","علامات وقت ذهبية بدون دايرة، وعقرب ثواني أحمر، ورقم اليوم.","Frameless gold hour marks, a red second hand and today's day number."],
+["🕰️","شاشة توقف ذهبية","Gold screensaver","ساعة فاخرة بعد دقيقتين بدون استخدام، أو فوراً عند كتم الصوت.","A luxurious clock after 2 idle minutes, or instantly on mute."],
+["📱","كل الأجهزة","All devices","من أندرويد 5 القديم لين أحدث الأجهزة.","From old Android 5 boxes to the newest devices."],
 ["🔌","يشتغل لحاله","Runs standalone","بدون لابتوب، ويبدأ مع تشغيل الجهاز.","No PC needed; starts on boot."],
 ["✍️","خط الرقعة","Ruqaa calligraphy","«ديوانية الكويت» بخط ذهبي.","The name in golden calligraphy."]
 ];
 const TW=[
-["الشريط الأساسي","Main bar","الساعة والحرارة والصلاة والمباريات والأخبار وتنبيهات القصف والغبار والساعة الذهبية. ارتفاعه 6% من الشاشة.","Clock, temperature, prayer, matches, news, attack and dust alerts and the gold clock. Height: 6% of the screen.","https://github.com/29kuwait/diwaniya-kuwait/raw/main/DiwaniyaKuwait.apk"],
+["الشريط الأساسي","Main bar","لكل الأجهزة من أندرويد 5: الساعة والحرارة والصلاة والمباريات والأخبار وتنبيهات القصف والطقس والساعة الشفافة والساعة الذهبية. ارتفاعه 6% من الشاشة.","For every box from Android 5: clock, temperature, prayer, matches, news, attack and weather alerts, the corner clock and the gold clock. Height: 6% of the screen.","https://github.com/29kuwait/diwaniya-kuwait/raw/main/DiwaniyaKuwait.apk"],
 ["الشريط البسيط","Simple Bar","للأجهزة القديمة مثل Eurostar ES4000 (أندرويد 5.1): الطقس والساعة والصلاة القادمة. ارتفاعه 4.6% من الشاشة.","For older boxes such as the Eurostar ES4000 (Android 5.1): weather, clock and next prayer. Height: 4.6% of the screen.","https://github.com/29kuwait/diwaniya-kuwait/tree/main/simple-bar"]
 ];
 const ST=[
